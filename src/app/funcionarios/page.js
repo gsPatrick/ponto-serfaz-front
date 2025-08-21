@@ -10,7 +10,16 @@ import API_URL from '@/services/api';
 
 export default function GestaoFuncionariosPage() {
   const router = useRouter();
-  const [buscaTermo, setBuscaTermo] = useState('');
+  
+  // Estado centralizado para todos os filtros da página
+  const [filtros, setFiltros] = useState({
+    termoBusca: '', // Busca genérica por nome ou matrícula
+    cargo: '',
+    contrato: '',
+    escala: '',
+    status: '', // '' para todos, 'true' para ativos, 'false' para inativos
+  });
+
   const [funcionarios, setFuncionarios] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -21,7 +30,7 @@ export default function GestaoFuncionariosPage() {
   const [totalItems, setTotalItems] = useState(0);
   const itemsPerPage = 10;
 
-  // Modal de Adicionar/Editar Funcionário
+  // Estados do Modal de Adicionar/Editar Funcionário
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
   const [currentFuncionario, setCurrentFuncionario] = useState(null);
   const [formValues, setFormValues] = useState({
@@ -35,8 +44,8 @@ export default function GestaoFuncionariosPage() {
   const [formLoading, setFormLoading] = useState(false);
   const [formError, setFormError] = useState(null);
 
-  // Função para buscar dados da API
-  const fetchFuncionarios = useCallback(async (page = 1, termoBusca = '') => {
+  // Função para buscar dados da API, utilizando o objeto de filtros
+  const fetchFuncionarios = useCallback(async (page = 1, currentFilters) => {
     setLoading(true);
     setError(null);
     const token = localStorage.getItem('jwtToken');
@@ -46,19 +55,17 @@ export default function GestaoFuncionariosPage() {
     }
 
     try {
-      // Constrói a URL com query params para busca e paginação
       const params = new URLSearchParams({
         page: page,
         limit: itemsPerPage,
       });
-      if (termoBusca) {
-        // O backend espera 'nome' ou 'matricula', vamos enviar para ambos
-        params.append('nome', termoBusca);
-        // Se o termo de busca for numérico, podemos assumir que é uma matrícula
-        if (!isNaN(termoBusca)) {
-            params.append('matricula', termoBusca);
-        }
-      }
+      
+      // Adiciona todos os filtros que não estão vazios à query da URL
+      if (currentFilters.termoBusca) params.append('termoBusca', currentFilters.termoBusca);
+      if (currentFilters.cargo) params.append('cargo', currentFilters.cargo);
+      if (currentFilters.contrato) params.append('contrato', currentFilters.contrato);
+      if (currentFilters.escala) params.append('escala', currentFilters.escala);
+      if (currentFilters.status) params.append('ativo', currentFilters.status);
 
       const response = await fetch(`${API_URL}/funcionarios?${params.toString()}`, {
         headers: { 'Authorization': `Bearer ${token}` }
@@ -83,18 +90,24 @@ export default function GestaoFuncionariosPage() {
     }
   }, [router]);
 
+  // Efeito para busca automática com debounce
   useEffect(() => {
-    fetchFuncionarios(1, buscaTermo);
-  }, [fetchFuncionarios]);
+    const handler = setTimeout(() => {
+      fetchFuncionarios(1, filtros); // Sempre busca da página 1 ao mudar qualquer filtro
+    }, 500); // 500ms de espera
+    return () => clearTimeout(handler);
+  }, [filtros, fetchFuncionarios]);
 
-  const handleBusca = () => {
-    fetchFuncionarios(1, buscaTermo);
-  };
-  
   const handlePageChange = (newPage) => {
     if (newPage > 0 && newPage <= totalPages) {
-      fetchFuncionarios(newPage, buscaTermo);
+      fetchFuncionarios(newPage, filtros);
     }
+  };
+
+  // Handler genérico para atualizar o estado dos filtros
+  const handleFiltroChange = (e) => {
+    const { name, value } = e.target;
+    setFiltros(prev => ({ ...prev, [name]: value }));
   };
 
   const openAddModal = () => {
@@ -129,7 +142,6 @@ export default function GestaoFuncionariosPage() {
     setFormLoading(true);
     setFormError(null);
     const token = localStorage.getItem('jwtToken');
-
     const method = currentFuncionario ? 'PUT' : 'POST';
     const url = currentFuncionario ? `${API_URL}/funcionarios/${currentFuncionario.id}` : `${API_URL}/funcionarios`;
 
@@ -141,15 +153,13 @@ export default function GestaoFuncionariosPage() {
       });
 
       const responseData = await response.json();
-
       if (!response.ok) {
         throw new Error(responseData.message || `Falha ao ${currentFuncionario ? 'atualizar' : 'adicionar'} funcionário.`);
       }
 
       alert(`Funcionário ${currentFuncionario ? 'atualizado' : 'adicionado'} com sucesso!`);
       closeFormModal();
-      fetchFuncionarios(currentPage, buscaTermo); // Recarrega a lista
-
+      fetchFuncionarios(currentPage, filtros);
     } catch (err) {
       console.error('Erro ao salvar funcionário:', err);
       setFormError(err.message);
@@ -162,29 +172,24 @@ export default function GestaoFuncionariosPage() {
     if (!confirm(`Tem certeza que deseja ${funcionario.ativo ? 'DESATIVAR' : 'ATIVAR'} o funcionário ${funcionario.nome}?`)) {
         return;
     }
-    
     const token = localStorage.getItem('jwtToken');
     try {
         const response = await fetch(`${API_URL}/funcionarios/${funcionario.id}`, {
             method: 'PUT',
             headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ ...funcionario, ativo: !funcionario.ativo }), // Envia todos os dados com o status 'ativo' invertido
+            body: JSON.stringify({ ...funcionario, ativo: !funcionario.ativo }),
         });
-
         if (!response.ok) {
             const errorData = await response.json();
             throw new Error(errorData.message || 'Falha ao alterar status do funcionário.');
         }
-
         alert(`Funcionário ${!funcionario.ativo ? 'ativado' : 'desativado'} com sucesso!`);
-        fetchFuncionarios(currentPage, buscaTermo); // Recarrega a lista
-
+        fetchFuncionarios(currentPage, filtros);
     } catch (err) {
       console.error('Erro ao alternar status:', err);
-      setError(err.message); // Exibe o erro na tela principal
+      setError(err.message);
     }
   };
-
 
   return (
     <div>
@@ -196,19 +201,27 @@ export default function GestaoFuncionariosPage() {
           <div className={styles.searchContainer}>
             <input
               type="text"
+              name="termoBusca"
               className={styles.searchInput}
-              placeholder="Buscar por Nome ou Matrícula"
-              value={buscaTermo}
-              onChange={(e) => setBuscaTermo(e.target.value)}
-              onKeyPress={(e) => { if (e.key === 'Enter') handleBusca(); }}
+              placeholder="Buscar por Nome ou Matrícula..."
+              value={filtros.termoBusca}
+              onChange={handleFiltroChange}
             />
-            <button onClick={handleBusca} className={styles.searchButton} disabled={loading}>
-              {loading ? 'Buscando...' : 'Buscar'}
-            </button>
           </div>
           <button onClick={openAddModal} className={styles.addEmployeeButton}>
             Adicionar Novo Funcionário
           </button>
+        </section>
+
+        <section className={styles.filterContainer}>
+            <input type="text" name="escala" placeholder="Filtrar por Escala" className={styles.filterInput} value={filtros.escala} onChange={handleFiltroChange} />
+            <input type="text" name="cargo" placeholder="Filtrar por Cargo" className={styles.filterInput} value={filtros.cargo} onChange={handleFiltroChange} />
+            <input type="text" name="contrato" placeholder="Filtrar por Contrato" className={styles.filterInput} value={filtros.contrato} onChange={handleFiltroChange} />
+            <select name="status" className={styles.filterSelect} value={filtros.status} onChange={handleFiltroChange}>
+              <option value="">Todos os Status</option>
+              <option value="true">Apenas Ativos</option>
+              <option value="false">Apenas Inativos</option>
+            </select>
         </section>
 
         {error && <p className={styles.errorMessage}>{error}</p>}

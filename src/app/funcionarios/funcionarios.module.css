@@ -53,30 +53,6 @@
   box-shadow: 0 0 0 3px rgba(45, 130, 183, 0.2);
 }
 
-.searchButton {
-  background-color: var(--cor-azul-medio);
-  color: var(--cor-branco-puro);
-  padding: 0.8rem 1.2rem;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 1rem;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-  flex-shrink: 0;
-}
-
-.searchButton:hover {
-  background-color: #246ba6;
-  transform: translateY(-1px);
-}
-
-.searchButton:disabled {
-  background-color: #cccccc;
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
-}
-
 .addEmployeeButton {
   background-color: var(--cor-verde-esmeralda);
   color: var(--cor-branco-puro);
@@ -94,6 +70,36 @@
 .addEmployeeButton:hover {
   background-color: #266429;
   transform: translateY(-1px);
+}
+
+/* ESTILOS PARA O PAINEL DE FILTROS */
+.filterContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 1rem;
+  background-color: #f8f9fa; /* Cor de fundo suave */
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
+  margin-bottom: 0.5rem;
+}
+
+.filterInput,
+.filterSelect {
+  flex: 1 1 200px; /* Cresce, encolhe, com base de 200px */
+  padding: 0.8rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 0.95rem;
+  color: var(--cor-grafite);
+  outline: none;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.filterInput:focus,
+.filterSelect:focus {
+  border-color: var(--cor-azul-medio);
+  box-shadow: 0 0 0 3px rgba(45, 130, 183, 0.2);
 }
 
 .errorMessage {
@@ -165,10 +171,10 @@
 /* Actions in Table */
 .actions {
   display: flex;
-  flex-wrap: wrap; /* Permite que os botões quebrem em múltiplas linhas */
-  gap: 0.5rem; /* Espaçamento entre os botões */
-  justify-content: flex-start; /* Alinha os botões à esquerda */
-  align-items: center; /* Centraliza verticalmente */
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: flex-start;
+  align-items: center;
 }
 
 .actionButton {
@@ -178,11 +184,11 @@
   cursor: pointer;
   font-size: 0.8rem;
   transition: background-color 0.3s ease, transform 0.2s ease;
-  white-space: nowrap; /* Evita que o texto do botão quebre */
-  flex-shrink: 0; /* Impede que o botão encolha */
-  display: inline-block; /* Para 'a' se comportar como botão */
+  white-space: nowrap;
+  flex-shrink: 0;
+  display: inline-block;
   text-align: center;
-  line-height: 1; /* Garante alinhamento de texto */
+  line-height: 1;
 }
 
 .editButton {
@@ -223,7 +229,7 @@
 }
 
 
-/* Pagination - REUTILIZAÇÃO DOS ESTILOS GERAIS */
+/* Pagination */
 .pagination {
   display: flex;
   justify-content: center;
@@ -257,7 +263,7 @@
   font-size: 1rem;
 }
 
-/* Modal Styles - REUTILIZAÇÃO DOS ESTILOS DE INCONSISTÊNCIAS */
+/* Modal Styles */
 .modalOverlay {
   position: fixed;
   top: 0;
@@ -290,12 +296,12 @@
   text-align: center;
 }
 
-.inputGroup { /* Estilos para grupos de input no formulário do modal */
+.inputGroup {
   margin-bottom: 1rem;
   text-align: left;
 }
 
-.label { /* Reutiliza o estilo do label do filtro */
+.label {
   display: block;
   margin-bottom: 0.5rem;
   color: var(--cor-grafite);
@@ -303,7 +309,7 @@
   font-weight: 600;
 }
 
-.input { /* Reutiliza o estilo do input do filtro */
+.input {
   width: 100%;
   padding: 0.8rem 1rem;
   border: 1px solid #ccc;
@@ -325,7 +331,6 @@
   color: var(--cor-grafite);
   font-size: 1rem;
 }
-
 
 .modalActions {
   display: flex;
@@ -370,7 +375,7 @@
 }
 
 /* Responsividade geral da página */
-@media (max-width: 1024px) { /* Ajustes para tablets e laptops pequenos */
+@media (max-width: 1024px) {
   .funcionariosTable th,
   .funcionariosTable td {
     padding: 0.7rem 0.9rem;
@@ -384,13 +389,18 @@
   }
 
   .topControls {
-    flex-direction: column; /* Empilha a busca e o botão */
+    flex-direction: column;
     align-items: stretch;
   }
 
   .searchContainer {
     width: 100%;
     min-width: unset;
+  }
+  
+  .filterContainer {
+    flex-direction: column;
+    align-items: stretch;
   }
 
   .addEmployeeButton {
@@ -404,12 +414,12 @@
   }
 
   .actions {
-    flex-direction: column; /* Empilha os botões de ação */
+    flex-direction: column;
     gap: 0.4rem;
   }
 
   .actionButton {
-    width: 100%; /* Botões de ação ocupam 100% da largura em colunas */
+    width: 100%;
     padding: 0.6rem;
     font-size: 0.8rem;
   }
@@ -422,7 +432,7 @@
     margin-bottom: 1rem;
   }
   .modalActions {
-    flex-direction: column; /* Botões do modal empilhados em mobile */
+    flex-direction: column;
     gap: 0.8rem;
   }
   .modalActions button {
@@ -440,11 +450,11 @@
     margin-bottom: 1rem;
   }
 
-  .topControls {
+  .topControls, .filterContainer {
     padding: 1rem;
   }
 
-  .searchInput, .searchButton, .addEmployeeButton {
+  .searchInput, .addEmployeeButton, .filterInput, .filterSelect {
     padding: 0.7rem 1rem;
     font-size: 0.9rem;
   }
