@@ -72,7 +72,7 @@
   transform: translateY(-1px);
 }
 
-/* ESTILOS PARA O PAINEL DE FILTROS */
+/* ESTILOS PARA O PAINEL DE FILTROS COM DROPDOWNS */
 .filterContainer {
   display: flex;
   flex-wrap: wrap;
@@ -84,7 +84,6 @@
   margin-bottom: 0.5rem;
 }
 
-.filterInput,
 .filterSelect {
   flex: 1 1 200px; /* Cresce, encolhe, com base de 200px */
   padding: 0.8rem 1rem;
@@ -94,9 +93,10 @@
   color: var(--cor-grafite);
   outline: none;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  background-color: var(--cor-branco-puro); /* Fundo branco para o select */
+  cursor: pointer;
 }
 
-.filterInput:focus,
 .filterSelect:focus {
   border-color: var(--cor-azul-medio);
   box-shadow: 0 0 0 3px rgba(45, 130, 183, 0.2);
@@ -454,7 +454,7 @@
     padding: 1rem;
   }
 
-  .searchInput, .addEmployeeButton, .filterInput, .filterSelect {
+  .searchInput, .addEmployeeButton, .filterSelect {
     padding: 0.7rem 1rem;
     font-size: 0.9rem;
   }

@@ -114,8 +114,6 @@
 .marcacoesTable {
   width: 100%; /* A tabela tenta ocupar 100% da largura disponível */
   border-collapse: collapse;
-  /* REMOVIDO: min-width: 700px; */ /* Isso estava causando o problema. */
-  /* A tabela vai tentar se ajustar, e o overflow-x cuidará se ela for grande demais */
   table-layout: auto; /* Permite que o conteúdo das células influencie a largura da coluna */
 }
 
@@ -228,12 +226,6 @@
   .marcacoesTable td {
     padding: 0.5rem 0.7rem; /* Reduz o padding das células */
     font-size: 0.85rem; /* Reduz o tamanho da fonte */
-  }
-
-  /* Para telas muito pequenas, pode ser necessário um min-width para garantir a rolagem */
-  /* Mas evite valores muito altos para não "quebrar" o layout visualmente antes da rolagem */
-  .marcacoesTable {
-     /* min-width: 500px;  Apenas adicione se a tabela estiver ilegível sem rolagem em telas super pequenas */
   }
 }
 

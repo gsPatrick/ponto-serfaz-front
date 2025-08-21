@@ -1,31 +1,40 @@
 // src/app/relatorios/page.js
 'use client';
 
-import React, { useState, useEffect, useCallback, Suspense } from 'react';
+import React, { useState, useEffect, useCallback, Suspense, useMemo } from 'react';
 import Header from '@/components/Header/Header';
 import styles from './relatorios.module.css';
 import { useRouter, useSearchParams } from 'next/navigation';
 import API_URL from '@/services/api';
+
+const ITEMS_PER_PAGE = 10;
 
 // Componente interno para lidar com a lógica que usa useSearchParams
 const RelatoriosContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const [dataInicio, setDataInicio] = useState('');
-  const [dataFim, setDataFim] = useState('');
-  const [funcionarioBusca, setFuncionarioBusca] = useState('');
-  const [marcacoesFiltradas, setMarcacoesFiltradas] = useState([]);
+  // --- ESTADOS ---
+
+  // Lista COMPLETA de marcações para o período selecionado, vinda da API
+  const [allMarcacoes, setAllMarcacoes] = useState([]);
+  
+  // Estado centralizado para os filtros
+  const [filtros, setFiltros] = useState({
+    dataInicio: '',
+    dataFim: '',
+    funcionarioBusca: '', // Nome ou Matrícula
+  });
+
+  // Outros estados da UI
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  // Estados de Paginação
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const itemsPerPage = 10;
+  
+  // --- CARREGAMENTO INICIAL E RECARGA DE DADOS ---
 
-  // Função para buscar dados da API
-  const fetchMarcacoes = useCallback(async (page = 1, filters) => {
+  // Função para buscar TODOS os dados da API com base nos filtros
+  const fetchAllMarcacoes = useCallback(async (currentFilters) => {
     setLoading(true);
     setError(null);
     const token = localStorage.getItem('jwtToken');
@@ -33,12 +42,11 @@ const RelatoriosContent = () => {
       router.push('/login');
       return;
     }
-
     try {
       const params = new URLSearchParams();
-      if (filters.dataInicio) params.append('startDate', filters.dataInicio);
-      if (filters.dataFim) params.append('endDate', filters.dataFim);
-      if (filters.funcionarioBusca) params.append('funcionarioNome', filters.funcionarioBusca); // O backend pode filtrar por nome
+      if (currentFilters.dataInicio) params.append('startDate', currentFilters.dataInicio);
+      if (currentFilters.dataFim) params.append('endDate', currentFilters.dataFim);
+      // O backend de marcações não suporta busca por nome, faremos no front-end
       
       const response = await fetch(`${API_URL}/marcacoes?${params.toString()}`, {
         headers: { 'Authorization': `Bearer ${token}` }
@@ -50,88 +58,81 @@ const RelatoriosContent = () => {
       }
 
       const data = await response.json();
-      
-      // Paginação no lado do cliente, pois a API de marcações não retorna paginação
-      const totalItems = data.length;
-      setTotalPages(Math.ceil(totalItems / itemsPerPage));
-      
-      const paginatedData = data.slice((page - 1) * itemsPerPage, page * itemsPerPage);
-      setMarcacoesFiltradas(paginatedData);
-      setCurrentPage(page);
-
+      setAllMarcacoes(data);
+      setCurrentPage(1); // Sempre reseta a página ao buscar novos dados
     } catch (err) {
       console.error('Erro ao buscar marcações:', err);
       setError('Não foi possível carregar as marcações. Tente novamente.');
-      setMarcacoesFiltradas([]);
+      setAllMarcacoes([]);
     } finally {
       setLoading(false);
     }
   }, [router]);
 
-  // Efeito para buscar os dados quando o componente montar ou os filtros mudarem
+  // Efeito para a busca inicial no carregamento da página
   useEffect(() => {
-    // Pega o nome do funcionário da URL, se existir
-    const funcFromQuery = searchParams.get('funcionario');
-    if (funcFromQuery) {
-      setFuncionarioBusca(funcFromQuery);
-    }
-    // Define um período padrão (últimos 7 dias)
+    const funcFromQuery = searchParams.get('funcionario') || '';
     const endDate = new Date().toISOString().split('T')[0];
     const startDate = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-    setDataInicio(startDate);
-    setDataFim(endDate);
     
-    fetchMarcacoes(1, { 
-      dataInicio: startDate, 
-      dataFim: endDate, 
-      funcionarioBusca: funcFromQuery || '' 
-    });
-  }, [fetchMarcacoes, searchParams]);
+    const initialFilters = { dataInicio: startDate, dataFim: endDate, funcionarioBusca: funcFromQuery };
+    setFiltros(initialFilters);
+    fetchAllMarcacoes(initialFilters);
+  }, [searchParams, fetchAllMarcacoes]);
 
-  const handleFiltrar = () => {
-    fetchMarcacoes(1, { dataInicio, dataFim, funcionarioBusca });
+
+  // --- LÓGICA DE FILTRAGEM E PAGINAÇÃO NO FRONT-END ---
+
+  const filteredMarcacoes = useMemo(() => {
+    if (!filtros.funcionarioBusca) return allMarcacoes;
+    const termoBuscaLower = filtros.funcionarioBusca.toLowerCase();
+    return allMarcacoes.filter(marcacao => 
+      marcacao.funcionario.nome.toLowerCase().includes(termoBuscaLower) ||
+      marcacao.funcionario.matricula.includes(filtros.funcionarioBusca)
+    );
+  }, [allMarcacoes, filtros.funcionarioBusca]);
+
+  const paginatedMarcacoes = useMemo(() => {
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filteredMarcacoes.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  }, [filteredMarcacoes, currentPage]);
+  
+  const totalPages = Math.ceil(filteredMarcacoes.length / ITEMS_PER_PAGE);
+
+  // --- HANDLERS ---
+
+  const handleFiltroChange = (e) => {
+    const { id, value } = e.target;
+    setFiltros(prev => ({ ...prev, [id]: value }));
   };
 
+  const handleFiltrarClick = () => {
+    // A busca por funcionário é instantânea, mas a busca por data precisa de um clique para chamar a API
+    fetchAllMarcacoes(filtros);
+  };
+  
   const handlePageChange = (newPage) => {
-    // A paginação ocorre no lado do cliente, então apenas atualizamos os dados exibidos
     if (newPage > 0 && newPage <= totalPages) {
       setCurrentPage(newPage);
-      // Re-chamar fetchMarcacoes para aplicar a paginação
-      fetchMarcacoes(newPage, { dataInicio, dataFim, funcionarioBusca });
     }
   };
   
-  const handleExport = async () => {
-    alert('Iniciando exportação... Isso pode levar um momento.');
-    setLoading(true);
-    // Para exportar todos os dados, fazemos uma nova chamada sem paginação
-    const token = localStorage.getItem('jwtToken');
+  const handleExport = () => {
+    if (filteredMarcacoes.length === 0) {
+      alert('Nenhum dado para exportar com os filtros atuais.');
+      return;
+    }
+    
+    alert('Iniciando exportação...');
     try {
-      const params = new URLSearchParams();
-      if (dataInicio) params.append('startDate', dataInicio);
-      if (dataFim) params.append('endDate', dataFim);
-      if (funcionarioBusca) params.append('funcionarioNome', funcionarioBusca);
-
-      const response = await fetch(`${API_URL}/marcacoes?${params.toString()}`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      if (!response.ok) throw new Error('Falha ao buscar dados para exportação.');
-      
-      const allData = await response.json();
-
-      if (allData.length === 0) {
-        alert('Nenhum dado encontrado para exportar com os filtros selecionados.');
-        return;
-      }
-
       const headers = ["Matrícula", "Nome", "Escala", "Data/Hora da Marcação", "Origem", "Data Extração"];
-      const rows = allData.map(m => [
-        m.funcionario.matricula,
-        m.funcionario.nome,
-        m.funcionario.escala,
-        `${new Date(m.dataMarcacao).toLocaleDateString('pt-BR', {timeZone: 'UTC'})} ${m.horaMarcacao}`,
-        m.origem,
-        new Date(m.dataExtracao).toLocaleDateString('pt-BR', {timeZone: 'UTC'})
+      const rows = filteredMarcacoes.map(m => [
+        `"${m.funcionario.matricula}"`, // Envolve em aspas para garantir formatação
+        `"${m.funcionario.nome}"`,
+        `"${m.funcionario.escala}"`,
+        `"${new Date(m.dataMarcacao).toLocaleDateString('pt-BR', {timeZone: 'UTC'})} ${m.horaMarcacao}"`,
+        `"${m.origem}"`,
+        `"${new Date(m.dataExtracao).toLocaleDateString('pt-BR', {timeZone: 'UTC'})}"`
       ]);
 
       let csvContent = "data:text/csv;charset=utf-8,"
@@ -141,15 +142,13 @@ const RelatoriosContent = () => {
       const encodedUri = encodeURI(csvContent);
       const link = document.createElement("a");
       link.setAttribute("href", encodedUri);
-      link.setAttribute("download", "relatorio_marcacoes.csv");
+      link.setAttribute("download", `relatorio_marcacoes_${filtros.dataInicio}_a_${filtros.dataFim}.csv`);
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
     } catch (err) {
       console.error('Erro ao exportar:', err);
       setError('Não foi possível exportar os dados.');
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -160,20 +159,20 @@ const RelatoriosContent = () => {
       <section className={styles.filtersContainer}>
         <div className={styles.filterGroup}>
           <label htmlFor="dataInicio" className={styles.label}>Data Início:</label>
-          <input type="date" id="dataInicio" className={styles.input} value={dataInicio} onChange={(e) => setDataInicio(e.target.value)} />
+          <input type="date" id="dataInicio" className={styles.input} value={filtros.dataInicio} onChange={handleFiltroChange} />
         </div>
         <div className={styles.filterGroup}>
           <label htmlFor="dataFim" className={styles.label}>Data Fim:</label>
-          <input type="date" id="dataFim" className={styles.input} value={dataFim} onChange={(e) => setDataFim(e.target.value)} />
+          <input type="date" id="dataFim" className={styles.input} value={filtros.dataFim} onChange={handleFiltroChange} />
         </div>
         <div className={styles.filterGroup}>
-          <label htmlFor="funcionarioBusca" className={styles.label}>Funcionário:</label>
-          <input type="text" id="funcionarioBusca" className={styles.input} placeholder="Nome ou Matrícula" value={funcionarioBusca} onChange={(e) => setFuncionarioBusca(e.target.value)} />
+          <label htmlFor="funcionarioBusca" className={styles.label}>Funcionário (filtro rápido):</label>
+          <input type="text" id="funcionarioBusca" className={styles.input} placeholder="Nome ou Matrícula" value={filtros.funcionarioBusca} onChange={handleFiltroChange} />
         </div>
-        <button onClick={handleFiltrar} className={styles.filterButton} disabled={loading}>
-          {loading ? 'Filtrando...' : 'Filtrar'}
+        <button onClick={handleFiltrarClick} className={styles.filterButton} disabled={loading}>
+          {loading ? 'Buscando...' : 'Buscar por Data'}
         </button>
-        <button onClick={handleExport} className={styles.exportButton} disabled={loading}>
+        <button onClick={handleExport} className={styles.exportButton} disabled={loading || filteredMarcacoes.length === 0}>
           Exportar CSV
         </button>
       </section>
@@ -196,8 +195,8 @@ const RelatoriosContent = () => {
             <tbody>
               {loading ? (
                 <tr><td colSpan="6" className={styles.noData}>Carregando...</td></tr>
-              ) : marcacoesFiltradas.length > 0 ? (
-                marcacoesFiltradas.map((marcacao) => (
+              ) : paginatedMarcacoes.length > 0 ? (
+                paginatedMarcacoes.map((marcacao) => (
                   <tr key={marcacao.id}>
                     <td>{marcacao.funcionario.matricula}</td>
                     <td>{marcacao.funcionario.nome}</td>
@@ -221,7 +220,7 @@ const RelatoriosContent = () => {
             Anterior
           </button>
           <span className={styles.pageInfo}>
-            Página {currentPage} de {totalPages}
+            Página {currentPage} de {totalPages} ({filteredMarcacoes.length} registros)
           </span>
           <button onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages || loading} className={styles.paginationButton}>
             Próxima
@@ -237,7 +236,7 @@ export default function RelatoriosPage() {
   return (
     <div>
       <Header />
-      <Suspense fallback={<div>Carregando filtros...</div>}>
+      <Suspense fallback={<div style={{padding: '2rem', textAlign: 'center'}}>Carregando...</div>}>
         <RelatoriosContent />
       </Suspense>
     </div>

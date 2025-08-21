@@ -63,7 +63,6 @@
   min-height: 80px;
 }
 
-
 .filterButton {
   background-color: var(--cor-azul-medio);
   color: var(--cor-branco-puro);
@@ -74,7 +73,6 @@
   font-size: 1rem;
   transition: background-color 0.3s ease, transform 0.2s ease;
   flex-shrink: 0;
-  margin-top: 1.5rem; /* Alinha com os inputs em desktop */
 }
 
 .filterButton:hover {
@@ -99,13 +97,13 @@
   text-align: center;
 }
 
-/* Table Section - REUTILIZAÇÃO DOS ESTILOS DE RELATÓRIOS */
+/* Table Section */
 .tableSection {
   background-color: var(--cor-branco-puro);
   padding: 1.5rem;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  overflow-x: auto; /* Permite rolagem horizontal para a tabela */
+  overflow-x: auto;
 }
 
 .tableWrapper {
@@ -115,7 +113,7 @@
 .inconsistenciasTable {
   width: 100%;
   border-collapse: collapse;
-  table-layout: auto; /* Permite que o conteúdo das células influencie a largura */
+  table-layout: auto;
 }
 
 .inconsistenciasTable th,
@@ -123,7 +121,7 @@
   border: 1px solid #eee;
   padding: 0.8rem 1rem;
   text-align: left;
-  white-space: nowrap; /* Impede que o texto quebre dentro da célula */
+  white-space: nowrap;
   vertical-align: middle;
 }
 
@@ -151,24 +149,24 @@
 /* Status Badges */
 .statusOpen {
   font-weight: bold;
-  color: var(--cor-vermelho-rubi); /* Erros, alertas */
+  color: var(--cor-vermelho-rubi);
 }
 
 .statusInProgress {
   font-weight: bold;
-  color: var(--cor-ambar); /* Avisos, em análise */
+  color: var(--cor-ambar);
 }
 
 .statusResolved {
   font-weight: bold;
-  color: var(--cor-verde-esmeralda); /* Sucesso, resolvidas */
+  color: var(--cor-verde-esmeralda);
 }
 
 /* Actions in Table */
 .actions {
   display: flex;
   gap: 0.5rem;
-  white-space: nowrap; /* Evita que os botões de ação quebrem linha */
+  white-space: nowrap;
 }
 
 .actionButton {
@@ -198,7 +196,7 @@
   background-color: #e09b00;
 }
 
-/* Pagination - REUTILIZAÇÃO DOS ESTILOS DE RELATÓRIOS */
+/* Pagination */
 .pagination {
   display: flex;
   justify-content: center;
@@ -235,15 +233,12 @@
 /* Modal Styles */
 .modalOverlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.6); /* Fundo escuro translúcido */
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000; /* Garante que o modal fique acima de tudo */
+  z-index: 1000;
 }
 
 .modalContent {
@@ -251,10 +246,10 @@
   padding: 2.5rem;
   border-radius: 8px;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
-  max-width: 600px; /* Largura máxima do modal */
-  width: 90%; /* Adapta-se à largura da tela */
-  max-height: 90vh; /* Altura máxima para caber na tela */
-  overflow-y: auto; /* Adiciona scroll se o conteúdo for muito grande */
+  max-width: 600px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
   position: relative;
 }
 
@@ -334,108 +329,36 @@
   cursor: not-allowed;
 }
 
-/* Responsividade geral da página */
-@media (max-width: 1024px) { /* Ajustes para tablets e laptops pequenos */
-  .inconsistenciasTable th,
-  .inconsistenciasTable td {
-    padding: 0.7rem 0.9rem;
-  }
-  .actionButton {
-    padding: 0.4rem 0.7rem;
-    font-size: 0.75rem;
-  }
+/* Responsividade */
+@media (max-width: 1024px) {
+  .inconsistenciasTable th, .inconsistenciasTable td { padding: 0.7rem 0.9rem; }
+  .actionButton { padding: 0.4rem 0.7rem; font-size: 0.75rem; }
 }
 
 @media (max-width: 768px) {
-  .inconsistenciasMain {
-    padding: 1.5rem;
-    gap: 1rem;
-  }
-
-  .filtersContainer {
-    flex-direction: column; /* Empilha os filtros verticalmente */
-    align-items: stretch;
-  }
-
-  .filterGroup {
-    min-width: unset;
-    width: 100%;
-  }
-
-  .filterButton {
-    width: 100%;
-    margin-top: 0.5rem;
-  }
-
-  .filterButton:first-of-type {
-    margin-top: 1.5rem;
-  }
-
-  .modalContent {
-    padding: 1.5rem;
-  }
-  .modalTitle {
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
-  }
-  .modalActions {
-    flex-direction: column; /* Botões do modal empilhados em mobile */
-    gap: 0.8rem;
-  }
-  .modalActions button {
-    width: 100%;
-  }
+  .inconsistenciasMain { padding: 1.5rem; gap: 1rem; }
+  .filtersContainer { flex-direction: column; align-items: stretch; }
+  .filterGroup { min-width: unset; width: 100%; }
+  .filterButton { width: 100%; margin-top: 0.5rem; }
+  .modalContent { padding: 1.5rem; }
+  .modalTitle { font-size: 1.5rem; margin-bottom: 1rem; }
+  .modalActions { flex-direction: column; gap: 0.8rem; }
+  .modalActions button { width: 100%; }
 }
 
 @media (max-width: 600px) {
-  .inconsistenciasMain {
-    padding: 1rem;
-  }
-
-  .pageTitle {
-    font-size: 1.6rem;
-    margin-bottom: 1rem;
-  }
-
-  .filtersContainer {
-    padding: 1rem;
-  }
-
-  .inconsistenciasTable th,
-  .inconsistenciasTable td {
-    padding: 0.6rem 0.8rem;
-    font-size: 0.9rem;
-  }
-  .actions {
-    flex-direction: column; /* Ações da tabela empilhadas */
-    gap: 0.3rem;
-  }
-  .actionButton {
-    width: 100%; /* Botões de ação ocupam 100% da largura em colunas */
-    padding: 0.6rem;
-    font-size: 0.8rem;
-  }
+  .inconsistenciasMain { padding: 1rem; }
+  .pageTitle { font-size: 1.6rem; margin-bottom: 1rem; }
+  .filtersContainer { padding: 1rem; }
+  .inconsistenciasTable th, .inconsistenciasTable td { padding: 0.6rem 0.8rem; font-size: 0.9rem; }
+  .actions { flex-direction: column; gap: 0.3rem; }
+  .actionButton { width: 100%; padding: 0.6rem; font-size: 0.8rem; }
 }
 
 @media (max-width: 400px) {
-  .pageTitle {
-    font-size: 1.4rem;
-  }
-
-  .input, .textarea, .filterButton, .paginationButton {
-    padding: 0.7rem 1rem;
-    font-size: 0.9rem;
-  }
-
-  .inconsistenciasTable th,
-  .inconsistenciasTable td {
-    padding: 0.5rem 0.6rem;
-    font-size: 0.8rem;
-  }
-  .modalContent {
-    padding: 1rem;
-  }
-  .modalTitle {
-    font-size: 1.3rem;
-  }
+  .pageTitle { font-size: 1.4rem; }
+  .input, .textarea, .filterButton, .paginationButton { padding: 0.7rem 1rem; font-size: 0.9rem; }
+  .inconsistenciasTable th, .inconsistenciasTable td { padding: 0.5rem 0.6rem; font-size: 0.8rem; }
+  .modalContent { padding: 1rem; }
+  .modalTitle { font-size: 1.3rem; }
 }

@@ -1,11 +1,13 @@
 // src/app/inconsistencias/page.js
 'use client';
 
-import React, { useState, useEffect, useCallback, Suspense } from 'react';
+import React, { useState, useEffect, useCallback, Suspense, useMemo } from 'react';
 import Header from '@/components/Header/Header';
 import styles from './inconsistencias.module.css';
 import { useRouter, useSearchParams } from 'next/navigation';
 import API_URL from '@/services/api';
+
+const ITEMS_PER_PAGE = 10;
 
 // Mapeamento de status para classes CSS
 const getStatusClass = (status) => {
@@ -17,42 +19,24 @@ const getStatusClass = (status) => {
   }
 };
 
-const tiposInconsistencia = [
-  'Todos',
-  'Ausência de Marcação',
-  'Marcação Incompleta',
-  'Intervalo de Almoço Insuficiente',
-];
-
-const statusInconsistencia = [
-  'Todos',
-  'Detectado',
-  'Em Análise',
-  'Resolvido',
-];
+const tiposInconsistencia = [ 'Todos', 'Ausência de Marcação', 'Marcação Incompleta', 'Intervalo de Almoço Insuficiente' ];
+const statusInconsistencia = [ 'Todos', 'Detectado', 'Em Análise', 'Resolvido' ];
 
 // Componente interno para a lógica principal
 const InconsistenciasContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // Estados de Filtro
-  const [dataInicio, setDataInicio] = useState('');
-  const [dataFim, setDataFim] = useState('');
-  const [funcionarioBusca, setFuncionarioBusca] = useState('');
-  const [statusFiltro, setStatusFiltro] = useState('Todos');
-  const [tipoFiltro, setTipoFiltro] = useState('Todos');
-  
-  const [inconsistencias, setInconsistencias] = useState([]);
+  // --- ESTADOS ---
+  const [allInconsistencias, setAllInconsistencias] = useState([]);
+  const [filtros, setFiltros] = useState({
+    dataInicio: '', dataFim: '', funcionarioBusca: '', statusFiltro: 'Todos', tipoFiltro: 'Todos',
+  });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  // Paginação
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const itemsPerPage = 10;
 
-  // Modais
+  // Estados dos Modais
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [selectedInconsistencia, setSelectedInconsistencia] = useState(null);
   const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
@@ -63,96 +47,93 @@ const InconsistenciasContent = () => {
   const [formError, setFormError] = useState(null);
 
 
-  const fetchInconsistencias = useCallback(async (page = 1, filters) => {
+  // --- CARREGAMENTO DE DADOS ---
+  const fetchInconsistenciasByDate = useCallback(async (currentFilters) => {
     setLoading(true);
     setError(null);
     const token = localStorage.getItem('jwtToken');
-    if (!token) {
-      router.push('/login');
-      return;
-    }
+    if (!token) { router.push('/login'); return; }
 
     try {
       const params = new URLSearchParams();
-      if (filters.dataInicio) params.append('dataReferencia', filters.dataInicio); // O backend pode usar a mesma data para início e fim se apenas uma for fornecida
-      if (filters.dataFim) params.append('dataReferenciaFim', filters.dataFim); // Um param customizado para range seria melhor, mas adaptamos
-      if (filters.funcionarioBusca) params.append('funcionarioNome', filters.funcionarioBusca);
-      if (filters.statusFiltro && filters.statusFiltro !== 'Todos') params.append('status', filters.statusFiltro);
-      if (filters.tipoFiltro && filters.tipoFiltro !== 'Todos') params.append('tipoInconsistencia', filters.tipoFiltro);
+      // A API buscará pelo range de data de referência
+      if (currentFilters.dataInicio) params.append('startDate', currentFilters.dataInicio);
+      if (currentFilters.dataFim) params.append('endDate', currentFilters.dataFim);
 
       const response = await fetch(`${API_URL}/inconsistencias?${params.toString()}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
-
-      if (!response.ok) {
-        if ([401, 403].includes(response.status)) router.push('/login');
-        throw new Error('Falha ao carregar inconsistências.');
-      }
-
+      if (!response.ok) throw new Error('Falha ao carregar inconsistências.');
+      
       const data = await response.json();
-      
-      const totalItems = data.length;
-      setTotalPages(Math.ceil(totalItems / itemsPerPage));
-      
-      const paginatedData = data.slice((page - 1) * itemsPerPage, page * itemsPerPage);
-      setInconsistencias(paginatedData);
-      setCurrentPage(page);
-
+      setAllInconsistencias(data);
+      setCurrentPage(1);
     } catch (err) {
       console.error('Erro ao buscar inconsistências:', err);
       setError('Não foi possível carregar as inconsistências. Tente novamente.');
-      setInconsistencias([]);
+      setAllInconsistencias([]);
     } finally {
       setLoading(false);
     }
   }, [router]);
 
+  // Efeito para a busca inicial no carregamento da página
   useEffect(() => {
-    const funcFromQuery = searchParams.get('funcionario');
+    const funcFromQuery = searchParams.get('funcionario') || '';
     const initialFilters = {
-      dataInicio: '',
-      dataFim: '',
-      funcionarioBusca: funcFromQuery || '',
-      statusFiltro: 'Todos',
-      tipoFiltro: 'Todos',
+      dataInicio: '', dataFim: '', funcionarioBusca: funcFromQuery, statusFiltro: 'Todos', tipoFiltro: 'Todos',
     };
+    setFiltros(initialFilters);
+    fetchInconsistenciasByDate(initialFilters);
+  }, [fetchInconsistenciasByDate, searchParams]);
 
-    if (funcFromQuery) {
-      setFuncionarioBusca(funcFromQuery);
-    }
-    
-    fetchInconsistencias(1, initialFilters);
-  }, [fetchInconsistencias, searchParams]);
 
-  const handleFiltrar = () => {
-    fetchInconsistencias(1, { dataInicio, dataFim, funcionarioBusca, statusFiltro, tipoFiltro });
+  // --- LÓGICA DE FILTRAGEM E PAGINAÇÃO NO FRONT-END ---
+  const filteredInconsistencias = useMemo(() => {
+    return allInconsistencias.filter(inc => {
+      const termoBuscaLower = filtros.funcionarioBusca.toLowerCase();
+      return (
+        (filtros.funcionarioBusca === '' || inc.funcionario.nome.toLowerCase().includes(termoBuscaLower)) &&
+        (filtros.statusFiltro === 'Todos' || inc.status === filtros.statusFiltro) &&
+        (filtros.tipoFiltro === 'Todos' || inc.tipoInconsistencia === filtros.tipoFiltro)
+      );
+    });
+  }, [allInconsistencias, filtros]);
+
+  const paginatedInconsistencias = useMemo(() => {
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filteredInconsistencias.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  }, [filteredInconsistencias, currentPage]);
+
+  const totalPages = Math.ceil(filteredInconsistencias.length / ITEMS_PER_PAGE);
+
+
+  // --- HANDLERS ---
+  const handleFiltroChange = (e) => {
+    const { id, value } = e.target;
+    setFiltros(prev => ({ ...prev, [id]: value }));
+    setCurrentPage(1); // Reseta a página para filtros rápidos
   };
-  
+
+  const handleFiltrarClick = () => {
+    fetchInconsistenciasByDate(filtros); // Refaz a busca na API por data
+  };
+
   const handlePageChange = (newPage) => {
     if (newPage > 0 && newPage <= totalPages) {
-      fetchInconsistencias(newPage, { dataInicio, dataFim, funcionarioBusca, statusFiltro, tipoFiltro });
+      setCurrentPage(newPage);
     }
   };
-
-  const openDetailsModal = (inconsistencia) => {
-    setSelectedInconsistencia(inconsistencia);
-    setIsDetailsModalOpen(true);
-  };
+  
+  // --- Funções dos Modais ---
+  const openDetailsModal = (inc) => { setSelectedInconsistencia(inc); setIsDetailsModalOpen(true); };
   const closeDetailsModal = () => setIsDetailsModalOpen(false);
-
-  const openStatusModal = (inconsistencia) => {
-    setInconsistenciaToUpdate(inconsistencia);
-    setNewStatus(inconsistencia.status);
-    setStatusObservacoes(inconsistencia.observacoesResolucao || '');
-    setFormError(null);
-    setIsStatusModalOpen(true);
-  };
+  const openStatusModal = (inc) => { setInconsistenciaToUpdate(inc); setNewStatus(inc.status); setStatusObservacoes(inc.observacoesResolucao || ''); setFormError(null); setIsStatusModalOpen(true); };
   const closeStatusModal = () => setIsStatusModalOpen(false);
 
   const handleStatusUpdate = async (e) => {
     e.preventDefault();
-    setFormLoading(true);
-    setFormError(null);
+    setFormLoading(true); setFormError(null);
     const token = localStorage.getItem('jwtToken');
     const userData = JSON.parse(localStorage.getItem('userData'));
 
@@ -160,21 +141,16 @@ const InconsistenciasContent = () => {
       const response = await fetch(`${API_URL}/inconsistencias/${inconsistenciaToUpdate.id}/status`, {
         method: 'PATCH',
         headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          newStatus: newStatus,
-          observacoes: statusObservacoes,
-          resolvidoPorId: userData.id, // Envia o ID do usuário logado
-        }),
+        body: JSON.stringify({ newStatus, observacoes: statusObservacoes, resolvidoPorId: userData.id }),
       });
       const responseData = await response.json();
       if (!response.ok) throw new Error(responseData.message || 'Falha ao atualizar status.');
       
       alert('Status atualizado com sucesso!');
       closeStatusModal();
-      fetchInconsistencias(currentPage, { dataInicio, dataFim, funcionarioBusca, statusFiltro, tipoFiltro });
-
+      // Atualiza o estado local para refletir a mudança instantaneamente
+      setAllInconsistencias(prev => prev.map(inc => inc.id === inconsistenciaToUpdate.id ? responseData.data : inc));
     } catch (err) {
-      console.error('Erro ao atualizar status:', err);
       setFormError(err.message);
     } finally {
       setFormLoading(false);
@@ -186,12 +162,12 @@ const InconsistenciasContent = () => {
       <h1 className={styles.pageTitle}>Gestão de Inconsistências</h1>
 
       <section className={styles.filtersContainer}>
-        <div className={styles.filterGroup}><label htmlFor="dataInicio" className={styles.label}>Data Ref. Início:</label><input type="date" id="dataInicio" className={styles.input} value={dataInicio} onChange={(e) => setDataInicio(e.target.value)} /></div>
-        <div className={styles.filterGroup}><label htmlFor="dataFim" className={styles.label}>Data Ref. Fim:</label><input type="date" id="dataFim" className={styles.input} value={dataFim} onChange={(e) => setDataFim(e.target.value)} /></div>
-        <div className={styles.filterGroup}><label htmlFor="funcionarioBusca" className={styles.label}>Funcionário:</label><input type="text" id="funcionarioBusca" className={styles.input} placeholder="Nome do Funcionário" value={funcionarioBusca} onChange={(e) => setFuncionarioBusca(e.target.value)} /></div>
-        <div className={styles.filterGroup}><label htmlFor="statusFiltro" className={styles.label}>Status:</label><select id="statusFiltro" className={styles.input} value={statusFiltro} onChange={(e) => setStatusFiltro(e.target.value)}>{statusInconsistencia.map(status => (<option key={status} value={status}>{status}</option>))}</select></div>
-        <div className={styles.filterGroup}><label htmlFor="tipoFiltro" className={styles.label}>Tipo:</label><select id="tipoFiltro" className={styles.input} value={tipoFiltro} onChange={(e) => setTipoFiltro(e.target.value)}>{tiposInconsistencia.map(tipo => (<option key={tipo} value={tipo}>{tipo}</option>))}</select></div>
-        <button onClick={handleFiltrar} className={styles.filterButton} disabled={loading}>{loading ? 'Filtrando...' : 'Filtrar'}</button>
+        <div className={styles.filterGroup}><label htmlFor="dataInicio" className={styles.label}>Data Ref. Início:</label><input type="date" id="dataInicio" className={styles.input} value={filtros.dataInicio} onChange={handleFiltroChange} /></div>
+        <div className={styles.filterGroup}><label htmlFor="dataFim" className={styles.label}>Data Ref. Fim:</label><input type="date" id="dataFim" className={styles.input} value={filtros.dataFim} onChange={handleFiltroChange} /></div>
+        <div className={styles.filterGroup}><label htmlFor="funcionarioBusca" className={styles.label}>Funcionário:</label><input type="text" id="funcionarioBusca" className={styles.input} placeholder="Filtrar por nome..." value={filtros.funcionarioBusca} onChange={handleFiltroChange} /></div>
+        <div className={styles.filterGroup}><label htmlFor="statusFiltro" className={styles.label}>Status:</label><select id="statusFiltro" className={styles.input} value={filtros.statusFiltro} onChange={handleFiltroChange}>{statusInconsistencia.map(status => (<option key={status} value={status}>{status}</option>))}</select></div>
+        <div className={styles.filterGroup}><label htmlFor="tipoFiltro" className={styles.label}>Tipo:</label><select id="tipoFiltro" className={styles.input} value={filtros.tipoFiltro} onChange={handleFiltroChange}>{tiposInconsistencia.map(tipo => (<option key={tipo} value={tipo}>{tipo}</option>))}</select></div>
+        <button onClick={handleFiltrarClick} className={styles.filterButton} disabled={loading}>{loading ? 'Buscando...' : 'Buscar por Data'}</button>
       </section>
 
       {error && <p className={styles.errorMessage}>{error}</p>}
@@ -203,13 +179,11 @@ const InconsistenciasContent = () => {
             <tbody>
               {loading ? (
                 <tr><td colSpan="7" className={styles.noData}>Carregando...</td></tr>
-              ) : inconsistencias.length > 0 ? (
-                inconsistencias.map((inc) => (
+              ) : paginatedInconsistencias.length > 0 ? (
+                paginatedInconsistencias.map((inc) => (
                   <tr key={inc.id}>
                     <td>{new Date(inc.dataReferencia).toLocaleDateString('pt-BR', { timeZone: 'UTC' })}</td>
-                    <td>{inc.funcionario.nome}</td>
-                    <td>{inc.tipoInconsistencia}</td>
-                    <td>{inc.mensagemGerada}</td>
+                    <td>{inc.funcionario.nome}</td><td>{inc.tipoInconsistencia}</td><td>{inc.mensagemGerada}</td>
                     <td className={getStatusClass(inc.status)}>{inc.status}</td>
                     <td>{new Date(inc.detectadoEm).toLocaleString('pt-BR')}</td>
                     <td className={styles.actions}>
@@ -219,7 +193,7 @@ const InconsistenciasContent = () => {
                   </tr>
                 ))
               ) : (
-                <tr><td colSpan="7" className={styles.noData}>Nenhuma inconsistência encontrada.</td></tr>
+                <tr><td colSpan="7" className={styles.noData}>Nenhuma inconsistência encontrada para os filtros selecionados.</td></tr>
               )}
             </tbody>
           </table>
@@ -229,7 +203,7 @@ const InconsistenciasContent = () => {
       {totalPages > 1 && (
         <section className={styles.pagination}>
           <button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1 || loading} className={styles.paginationButton}>Anterior</button>
-          <span className={styles.pageInfo}>Página {currentPage} de {totalPages}</span>
+          <span className={styles.pageInfo}>Página {currentPage} de {totalPages} ({filteredInconsistencias.length} registros)</span>
           <button onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages || loading} className={styles.paginationButton}>Próxima</button>
         </section>
       )}
@@ -255,25 +229,11 @@ const InconsistenciasContent = () => {
           <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
             <h2 className={styles.modalTitle}>Mudar Status da Inconsistência</h2>
             <form onSubmit={handleStatusUpdate}>
-              <div className={styles.inputGroup}>
-                <label className={styles.label}>Inconsistência:</label>
-                <input type="text" className={styles.input} value={`${inconsistenciaToUpdate.funcionario.nome} - ${inconsistenciaToUpdate.tipoInconsistencia} (${new Date(inconsistenciaToUpdate.dataReferencia).toLocaleDateString('pt-BR', { timeZone: 'UTC' })})`} readOnly disabled />
-              </div>
-              <div className={styles.inputGroup}>
-                <label htmlFor="newStatus" className={styles.label}>Novo Status:</label>
-                <select id="newStatus" className={styles.input} value={newStatus} onChange={(e) => setNewStatus(e.target.value)} required>
-                  {statusInconsistencia.filter(s => s !== 'Todos').map(status => (<option key={status} value={status}>{status}</option>))}
-                </select>
-              </div>
-              <div className={styles.inputGroup}>
-                <label htmlFor="statusObservacoes" className={styles.label}>Observações:</label>
-                <textarea id="statusObservacoes" className={styles.textarea} rows="4" placeholder="Adicione observações sobre a mudança de status..." value={statusObservacoes} onChange={(e) => setStatusObservacoes(e.target.value)}></textarea>
-              </div>
+              <div className={styles.inputGroup}><label className={styles.label}>Inconsistência:</label><input type="text" className={styles.input} value={`${inconsistenciaToUpdate.funcionario.nome} - ${inconsistenciaToUpdate.tipoInconsistencia} (${new Date(inconsistenciaToUpdate.dataReferencia).toLocaleDateString('pt-BR', { timeZone: 'UTC' })})`} readOnly disabled /></div>
+              <div className={styles.inputGroup}><label htmlFor="newStatus" className={styles.label}>Novo Status:</label><select id="newStatus" className={styles.input} value={newStatus} onChange={(e) => setNewStatus(e.target.value)} required>{statusInconsistencia.filter(s => s !== 'Todos').map(status => (<option key={status} value={status}>{status}</option>))}</select></div>
+              <div className={styles.inputGroup}><label htmlFor="statusObservacoes" className={styles.label}>Observações:</label><textarea id="statusObservacoes" className={styles.textarea} rows="4" placeholder="Adicione observações sobre a mudança de status..." value={statusObservacoes} onChange={(e) => setStatusObservacoes(e.target.value)}></textarea></div>
               {formError && <p className={styles.errorMessage}>{formError}</p>}
-              <div className={styles.modalActions}>
-                <button type="button" onClick={closeStatusModal} className={styles.cancelButton}>Cancelar</button>
-                <button type="submit" className={styles.saveButton} disabled={formLoading}>{formLoading ? 'Salvando...' : 'Salvar'}</button>
-              </div>
+              <div className={styles.modalActions}><button type="button" onClick={closeStatusModal} className={styles.cancelButton}>Cancelar</button><button type="submit" className={styles.saveButton} disabled={formLoading}>{formLoading ? 'Salvando...' : 'Salvar'}</button></div>
             </form>
           </div>
         </div>
@@ -286,7 +246,7 @@ export default function GestaoInconsistenciasPage() {
   return (
     <div>
       <Header />
-      <Suspense fallback={<div>Carregando...</div>}>
+      <Suspense fallback={<div style={{padding: '2rem', textAlign: 'center'}}>Carregando...</div>}>
         <InconsistenciasContent />
       </Suspense>
     </div>
