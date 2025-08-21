@@ -1,0 +1,262 @@
+/* src/components/Header/Header.module.css */
+
+.header {
+  background-color: var(--cor-azul-noturno);
+  color: var(--cor-branco-puro);
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  height: 80px;
+}
+
+.leftSection {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.logoLink {
+  color: var(--cor-branco-puro);
+  /* text-decoration: none; /* REMOVIDO */
+  transition: color 0.3s ease;
+}
+
+.logoLink:hover {
+  color: var(--cor-azul-medio);
+  text-decoration: underline; /* ADICIONADO */
+}
+
+/* Navegação Principal (Desktop Styles) */
+.nav {
+  display: flex;
+  flex-grow: 1;
+  justify-content: center;
+  transition: all 0.3s ease-in-out;
+}
+
+.navList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: 1.5rem;
+}
+
+.navLink {
+  color: var(--cor-branco-puro);
+  /* text-decoration: none; /* REMOVIDO */
+  padding: 0.5rem 0.8rem;
+  border-radius: 4px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  white-space: nowrap;
+}
+
+.navLink:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--cor-azul-medio);
+  text-decoration: underline; /* ADICIONADO */
+}
+
+.activeLink {
+  background-color: var(--cor-azul-medio);
+  font-weight: bold;
+}
+
+.activeLink:hover {
+  background-color: #246ba6;
+}
+
+
+.userActions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-shrink: 0;
+}
+
+.userName {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
+  white-space: nowrap;
+}
+
+.logoutButton {
+  background-color: var(--cor-azul-medio);
+  color: var(--cor-branco-puro);
+  border: none;
+  padding: 0.6rem 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  white-space: nowrap;
+}
+
+.logoutButton:hover {
+  background-color: #246ba6;
+  transform: translateY(-1px);
+}
+
+/* --- Mobile Specific Styles --- */
+
+.hamburgerMenu {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  z-index: 101;
+}
+
+.hamburgerIcon {
+  width: 25px;
+  height: 3px;
+  background-color: var(--cor-branco-puro);
+  margin: 5px 0;
+  transition: all 0.3s ease;
+}
+
+/* Quando o menu está aberto, transforma o ícone hambúrguer em um "X" */
+.navOpen .hamburgerIcon:nth-child(1) {
+  transform: translateY(8px) rotate(45deg);
+}
+.navOpen .hamburgerIcon:nth-child(2) {
+  opacity: 0;
+}
+.navOpen .hamburgerIcon:nth-child(3) {
+  transform: translateY(-8px) rotate(-45deg);
+}
+
+
+@media (max-width: 1024px) {
+  .header {
+    padding: 1rem 1.5rem;
+    height: 70px;
+  }
+
+  .nav {
+    flex-grow: unset;
+  }
+
+  .navList {
+    gap: 1rem;
+  }
+
+  .logo {
+    font-size: 1.4rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .header {
+    justify-content: space-between;
+    padding: 0.8rem 1rem;
+    height: 60px;
+  }
+
+  .userActions {
+    gap: 0.8rem;
+  }
+
+  .userName {
+    display: none;
+  }
+
+  .logoutButton {
+    padding: 0.5rem 0.8rem;
+    font-size: 0.8rem;
+  }
+
+  .nav {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 70%;
+    max-width: 300px;
+    height: 100vh;
+    background-color: var(--cor-azul-noturno);
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding-top: 80px;
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.2);
+    z-index: 999;
+  }
+
+  .navOpen {
+    right: 0;
+  }
+
+  .navList {
+    flex-direction: column;
+    width: 100%;
+    padding: 1rem;
+    gap: 0.5rem;
+  }
+
+  .navItem {
+    width: 100%;
+  }
+
+  .navLink {
+    display: block;
+    width: 100%;
+    padding: 1rem 1.2rem;
+    text-align: left;
+    border-radius: 0;
+  }
+
+  .navLink:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .activeLink {
+    background-color: var(--cor-azul-medio);
+  }
+
+  .activeLink:hover {
+    background-color: #246ba6;
+  }
+
+  .hamburgerMenu {
+    display: block;
+  }
+
+  .mobileMenuOverlay {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 99;
+  }
+}
+
+@media (max-width: 480px) {
+  .header {
+    padding: 0.6rem 0.8rem;
+  }
+  .logo {
+    font-size: 1.2rem;
+  }
+  .logoutButton {
+    padding: 0.4rem 0.7rem;
+    font-size: 0.7rem;
+  }
+  .nav {
+    width: 80%;
+  }
+}

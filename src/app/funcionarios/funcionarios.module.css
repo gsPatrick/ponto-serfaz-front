@@ -1,0 +1,477 @@
+/* src/app/funcionarios/funcionarios.module.css */
+
+.funcionariosMain {
+  padding: 2rem;
+  background-color: var(--cor-cinza-neutro);
+  min-height: calc(100vh - 80px); /* Ajusta para considerar a altura do Header */
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.pageTitle {
+  color: var(--cor-azul-noturno);
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+/* Top Controls (Search and Add Button) */
+.topControls {
+  background-color: var(--cor-branco-puro);
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  margin-bottom: 0.5rem;
+  display: flex;
+  flex-wrap: wrap; /* Permite que os itens quebrem */
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem; /* Espaçamento entre os itens */
+}
+
+.searchContainer {
+  display: flex;
+  flex-grow: 1; /* Permite que a busca ocupe mais espaço */
+  gap: 0.5rem;
+  min-width: 250px; /* Largura mínima para a barra de busca */
+}
+
+.searchInput {
+  flex-grow: 1;
+  padding: 0.8rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
+  color: var(--cor-grafite);
+  outline: none;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.searchInput:focus {
+  border-color: var(--cor-azul-medio);
+  box-shadow: 0 0 0 3px rgba(45, 130, 183, 0.2);
+}
+
+.searchButton {
+  background-color: var(--cor-azul-medio);
+  color: var(--cor-branco-puro);
+  padding: 0.8rem 1.2rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.searchButton:hover {
+  background-color: #246ba6;
+  transform: translateY(-1px);
+}
+
+.searchButton:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.addEmployeeButton {
+  background-color: var(--cor-verde-esmeralda);
+  color: var(--cor-branco-puro);
+  padding: 0.8rem 1.5rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: bold;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  white-space: nowrap; /* Impede que o texto do botão quebre */
+  flex-shrink: 0;
+}
+
+.addEmployeeButton:hover {
+  background-color: #266429;
+  transform: translateY(-1px);
+}
+
+.errorMessage {
+  color: var(--cor-vermelho-rubi);
+  background-color: #ffebee;
+  border: 1px solid var(--cor-vermelho-rubi);
+  padding: 0.8rem;
+  border-radius: 5px;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+/* Table Section */
+.tableSection {
+  background-color: var(--cor-branco-puro);
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  overflow-x: auto; /* Permite rolagem horizontal para a tabela */
+}
+
+.funcionariosTable {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: auto;
+}
+
+.funcionariosTable th,
+.funcionariosTable td {
+  border: 1px solid #eee;
+  padding: 0.8rem 1rem;
+  text-align: left;
+  white-space: nowrap; /* Impede que o texto quebre dentro da célula */
+  vertical-align: middle;
+}
+
+.funcionariosTable th {
+  background-color: var(--cor-azul-noturno);
+  color: var(--cor-branco-puro);
+  font-weight: bold;
+}
+
+.funcionariosTable tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.funcionariosTable tr:hover {
+  background-color: #f0f0f0;
+}
+
+.noData {
+  text-align: center;
+  font-style: italic;
+  color: var(--cor-grafite);
+  padding: 2rem;
+}
+
+/* Status Badges */
+.statusActive {
+  font-weight: bold;
+  color: var(--cor-verde-esmeralda);
+}
+
+.statusInactive {
+  font-weight: bold;
+  color: var(--cor-grafite); /* Ou uma cor mais suave para desativado */
+}
+
+/* Actions in Table */
+.actions {
+  display: flex;
+  flex-wrap: wrap; /* Permite que os botões quebrem em múltiplas linhas */
+  gap: 0.5rem; /* Espaçamento entre os botões */
+  justify-content: flex-start; /* Alinha os botões à esquerda */
+  align-items: center; /* Centraliza verticalmente */
+}
+
+.actionButton {
+  padding: 0.5rem 0.8rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  white-space: nowrap; /* Evita que o texto do botão quebre */
+  flex-shrink: 0; /* Impede que o botão encolha */
+  display: inline-block; /* Para 'a' se comportar como botão */
+  text-align: center;
+  line-height: 1; /* Garante alinhamento de texto */
+}
+
+.editButton {
+  background-color: var(--cor-azul-medio);
+  color: var(--cor-branco-puro);
+}
+.editButton:hover {
+  background-color: #246ba6;
+  transform: translateY(-1px);
+}
+
+.activateButton {
+  background-color: var(--cor-verde-esmeralda);
+  color: var(--cor-branco-puro);
+}
+.activateButton:hover {
+  background-color: #266429;
+  transform: translateY(-1px);
+}
+
+.deactivateButton {
+  background-color: var(--cor-vermelho-rubi);
+  color: var(--cor-branco-puro);
+}
+.deactivateButton:hover {
+  background-color: #b72727;
+  transform: translateY(-1px);
+}
+
+.viewMarksButton, .viewInconsistenciesButton {
+  background-color: #6c757d; /* Cinza para ações secundárias */
+  color: var(--cor-branco-puro);
+  text-decoration: none; /* Já que são Links */
+}
+.viewMarksButton:hover, .viewInconsistenciesButton:hover {
+  background-color: #5a6268;
+  transform: translateY(-1px);
+}
+
+
+/* Pagination - REUTILIZAÇÃO DOS ESTILOS GERAIS */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1rem;
+  gap: 1rem;
+}
+
+.paginationButton {
+  background-color: var(--cor-azul-medio);
+  color: var(--cor-branco-puro);
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.3s ease;
+}
+
+.paginationButton:hover {
+  background-color: #246ba6;
+}
+
+.paginationButton:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.pageInfo {
+  color: var(--cor-grafite);
+  font-size: 1rem;
+}
+
+/* Modal Styles - REUTILIZAÇÃO DOS ESTILOS DE INCONSISTÊNCIAS */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modalContent {
+  background-color: var(--cor-branco-puro);
+  padding: 2.5rem;
+  border-radius: 8px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+  max-width: 600px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+.modalTitle {
+  color: var(--cor-azul-noturno);
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.inputGroup { /* Estilos para grupos de input no formulário do modal */
+  margin-bottom: 1rem;
+  text-align: left;
+}
+
+.label { /* Reutiliza o estilo do label do filtro */
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--cor-grafite);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.input { /* Reutiliza o estilo do input do filtro */
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
+  color: var(--cor-grafite);
+  outline: none;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.checkbox {
+  margin-right: 0.5rem;
+}
+
+.checkboxLabel {
+  display: inline-block;
+  vertical-align: middle;
+  cursor: pointer;
+  color: var(--cor-grafite);
+  font-size: 1rem;
+}
+
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.cancelButton {
+  background-color: #ccc;
+  color: var(--cor-grafite);
+  padding: 0.8rem 1.5rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.cancelButton:hover {
+  background-color: #b3b3b3;
+}
+
+.saveButton {
+  background-color: var(--cor-azul-medio);
+  color: var(--cor-branco-puro);
+  padding: 0.8rem 1.5rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.saveButton:hover {
+  background-color: #246ba6;
+}
+
+.saveButton:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+/* Responsividade geral da página */
+@media (max-width: 1024px) { /* Ajustes para tablets e laptops pequenos */
+  .funcionariosTable th,
+  .funcionariosTable td {
+    padding: 0.7rem 0.9rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .funcionariosMain {
+    padding: 1.5rem;
+    gap: 1rem;
+  }
+
+  .topControls {
+    flex-direction: column; /* Empilha a busca e o botão */
+    align-items: stretch;
+  }
+
+  .searchContainer {
+    width: 100%;
+    min-width: unset;
+  }
+
+  .addEmployeeButton {
+    width: 100%;
+  }
+
+  .funcionariosTable th,
+  .funcionariosTable td {
+    padding: 0.6rem 0.8rem;
+    font-size: 0.9rem;
+  }
+
+  .actions {
+    flex-direction: column; /* Empilha os botões de ação */
+    gap: 0.4rem;
+  }
+
+  .actionButton {
+    width: 100%; /* Botões de ação ocupam 100% da largura em colunas */
+    padding: 0.6rem;
+    font-size: 0.8rem;
+  }
+
+  .modalContent {
+    padding: 1.5rem;
+  }
+  .modalTitle {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .modalActions {
+    flex-direction: column; /* Botões do modal empilhados em mobile */
+    gap: 0.8rem;
+  }
+  .modalActions button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+  .funcionariosMain {
+    padding: 1rem;
+  }
+
+  .pageTitle {
+    font-size: 1.6rem;
+    margin-bottom: 1rem;
+  }
+
+  .topControls {
+    padding: 1rem;
+  }
+
+  .searchInput, .searchButton, .addEmployeeButton {
+    padding: 0.7rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  .funcionariosTable th,
+  .funcionariosTable td {
+    padding: 0.5rem 0.7rem;
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .pageTitle {
+    font-size: 1.4rem;
+  }
+
+  .modalContent {
+    padding: 1rem;
+  }
+  .modalTitle {
+    font-size: 1.3rem;
+  }
+  .input, .modalActions button {
+    padding: 0.7rem 1rem;
+    font-size: 0.9rem;
+  }
+  .checkboxLabel {
+    font-size: 0.9rem;
+  }
+}

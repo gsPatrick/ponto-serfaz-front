@@ -1,42 +1,53 @@
+/* src/app/globals.css */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+  --cor-azul-noturno: #1E2A38;
+  --cor-azul-medio: #2D82B7;
+  --cor-cinza-neutro: #ECEFF1;
+  --cor-branco-puro: #FFFFFF;
+  --cor-grafite: #444444;
+  --cor-verde-esmeralda: #2E7D32;
+  --cor-vermelho-rubi: #D32F2F;
+  --cor-ambar: #FFB300;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
+  /* Tipografia */
+  --fonte-titulo: 'Inter', sans-serif;
+  --fonte-subtitulo: 'Muli', 'Roboto', sans-serif;
+  --fonte-corpo: 'Roboto', sans-serif;
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  font-family: var(--fonte-corpo);
+  color: var(--cor-grafite);
+  background-color: var(--cor-branco-puro);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-* {
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--fonte-titulo);
+  color: var(--cor-azul-noturno);
+  font-weight: bold;
+}
+
+button {
+    font-family: var(--fonte-subtitulo);
+    font-weight: normal;
+}
+
+/* Estilos básicos para links, reset de box-sizing etc. */
+*,
+*::before,
+*::after {
   box-sizing: border-box;
-  padding: 0;
-  margin: 0;
 }
 
 a {
-  color: inherit;
-  text-decoration: none;
+  color: var(--cor-azul-medio);
+  text-decoration: none; /* REMOVE O SUBINHADO PADRÃO */
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
+a:hover {
+  text-decoration: underline; /* ADICIONA O SUBINHADO APENAS NO HOVER */
 }

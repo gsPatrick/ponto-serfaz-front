@@ -1,0 +1,256 @@
+/* src/app/relatorios/relatorios.module.css */
+
+.relatoriosMain {
+  padding: 2rem;
+  background-color: var(--cor-cinza-neutro);
+  min-height: calc(100vh - 80px); /* Ajusta para considerar a altura do Header */
+  display: flex; /* Adicionado para melhor controle do layout principal */
+  flex-direction: column; /* Conteúdo empilhado verticalmente */
+  gap: 1.5rem; /* Espaçamento entre as seções */
+}
+
+.pageTitle {
+  color: var(--cor-azul-noturno);
+  font-size: 2rem;
+  margin-bottom: 0.5rem; /* Ajustado */
+  text-align: center;
+}
+
+/* Filters Section */
+.filtersContainer {
+  background-color: var(--cor-branco-puro);
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  margin-bottom: 0.5rem; /* Ajustado */
+  display: flex;
+  flex-wrap: wrap; /* Permite que os itens quebrem para a próxima linha */
+  gap: 1rem; /* Espaçamento entre os filtros */
+  align-items: flex-end; /* Alinha os itens na parte inferior */
+}
+
+.filterGroup {
+  flex: 1; /* Permite que os grupos de filtro cresçam */
+  min-width: 180px; /* Largura mínima para cada grupo em desktop */
+}
+
+.label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--cor-grafite);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.input {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
+  color: var(--cor-grafite);
+  outline: none;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.input:focus {
+  border-color: var(--cor-azul-medio);
+  box-shadow: 0 0 0 3px rgba(45, 130, 183, 0.2);
+}
+
+.filterButton, .exportButton {
+  background-color: var(--cor-azul-medio);
+  color: var(--cor-branco-puro);
+  padding: 0.8rem 1.5rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  flex-shrink: 0; /* Impede que os botões encolham */
+  /* Remove margin-top aqui para permitir que flexbox cuide do alinhamento */
+}
+
+.filterButton:hover, .exportButton:hover {
+  background-color: #246ba6;
+  transform: translateY(-1px);
+}
+
+.filterButton:disabled, .exportButton:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.exportButton {
+  background-color: var(--cor-verde-esmeralda); /* Verde para exportar */
+}
+
+.exportButton:hover {
+  background-color: #266429;
+}
+
+.errorMessage {
+  color: var(--cor-vermelho-rubi);
+  background-color: #ffebee;
+  border: 1px solid var(--cor-vermelho-rubi);
+  padding: 0.8rem;
+  border-radius: 5px;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+
+/* Table Section */
+.tableSection {
+  background-color: var(--cor-branco-puro);
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  overflow-x: auto; /* CRUCIAL: Adiciona rolagem horizontal se a tabela for maior */
+}
+
+.marcacoesTable {
+  width: 100%; /* A tabela tenta ocupar 100% da largura disponível */
+  border-collapse: collapse;
+  /* REMOVIDO: min-width: 700px; */ /* Isso estava causando o problema. */
+  /* A tabela vai tentar se ajustar, e o overflow-x cuidará se ela for grande demais */
+  table-layout: auto; /* Permite que o conteúdo das células influencie a largura da coluna */
+}
+
+.marcacoesTable th,
+.marcacoesTable td {
+  border: 1px solid #eee;
+  padding: 0.8rem 1rem;
+  text-align: left;
+  white-space: nowrap; /* Impede que o texto quebre dentro da célula (para a rolagem funcionar bem) */
+  vertical-align: middle; /* Alinhamento vertical */
+}
+
+.marcacoesTable th {
+  background-color: var(--cor-azul-noturno);
+  color: var(--cor-branco-puro);
+  font-weight: bold;
+}
+
+.marcacoesTable tr:nth-child(even) {
+  background-color: #f9f9f9; /* Linhas zebradas para melhor legibilidade */
+}
+
+.marcacoesTable tr:hover {
+  background-color: #f0f0f0;
+}
+
+.noData {
+  text-align: center;
+  font-style: italic;
+  color: var(--cor-grafite);
+  padding: 2rem;
+}
+
+/* Pagination */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1rem; /* Ajustado */
+  gap: 1rem;
+}
+
+.paginationButton {
+  background-color: var(--cor-azul-medio);
+  color: var(--cor-branco-puro);
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.3s ease;
+}
+
+.paginationButton:hover {
+  background-color: #246ba6;
+}
+
+.paginationButton:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.pageInfo {
+  color: var(--cor-grafite);
+  font-size: 1rem;
+}
+
+/* Responsividade Geral */
+@media (max-width: 768px) {
+  .relatoriosMain {
+    padding: 1.5rem;
+    gap: 1rem; /* Reduz o espaçamento geral */
+  }
+
+  .filtersContainer {
+    flex-direction: column; /* Empilha os filtros verticalmente */
+    align-items: stretch; /* Estica os itens para preencher a largura */
+  }
+
+  .filterGroup {
+    min-width: unset; /* Remove largura mínima em mobile */
+    width: 100%; /* Ocupa toda a largura disponível */
+  }
+
+  .filterButton, .exportButton {
+    width: 100%; /* Botões também ocupam toda a largura */
+    margin-top: 0.5rem; /* Ajusta a margem entre os botões */
+  }
+
+  .filterButton:first-of-type {
+    margin-top: 1.5rem; /* Mantém margem para o primeiro botão */
+  }
+}
+
+@media (max-width: 600px) {
+  .relatoriosMain {
+    padding: 1rem;
+  }
+
+  .pageTitle {
+    font-size: 1.6rem;
+    margin-bottom: 1rem;
+  }
+
+  .filtersContainer {
+    padding: 1rem;
+  }
+
+  .marcacoesTable th,
+  .marcacoesTable td {
+    padding: 0.5rem 0.7rem; /* Reduz o padding das células */
+    font-size: 0.85rem; /* Reduz o tamanho da fonte */
+  }
+
+  /* Para telas muito pequenas, pode ser necessário um min-width para garantir a rolagem */
+  /* Mas evite valores muito altos para não "quebrar" o layout visualmente antes da rolagem */
+  .marcacoesTable {
+     /* min-width: 500px;  Apenas adicione se a tabela estiver ilegível sem rolagem em telas super pequenas */
+  }
+}
+
+/* Para telas de celular muito estreitas */
+@media (max-width: 400px) {
+  .pageTitle {
+    font-size: 1.4rem;
+  }
+
+  .input, .filterButton, .exportButton, .paginationButton {
+    padding: 0.7rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  .marcacoesTable th,
+  .marcacoesTable td {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.8rem;
+  }
+}

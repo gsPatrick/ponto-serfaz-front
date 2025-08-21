@@ -1,0 +1,419 @@
+/* src/app/feriados/feriados.module.css */
+
+.feriadosMain {
+  padding: 2rem;
+  background-color: var(--cor-cinza-neutro);
+  min-height: calc(100vh - 80px); /* Ajusta para considerar a altura do Header */
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.pageTitle {
+  color: var(--cor-azul-noturno);
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+/* Top Controls (Filters and Add Button) */
+.topControls {
+  background-color: var(--cor-branco-puro);
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  margin-bottom: 0.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start; /* Alinha os itens à esquerda */
+  align-items: flex-end; /* Alinha os itens pela base (útil para inputs e botões) */
+  gap: 1rem;
+}
+
+.filterGroup {
+  flex: 1;
+  min-width: 160px; /* Largura mínima para cada filtro */
+}
+
+.label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--cor-grafite);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.input {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
+  color: var(--cor-grafite);
+  outline: none;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.input:focus {
+  border-color: var(--cor-azul-medio);
+  box-shadow: 0 0 0 3px rgba(45, 130, 183, 0.2);
+}
+
+.filterButton {
+  background-color: var(--cor-azul-medio);
+  color: var(--cor-branco-puro);
+  padding: 0.8rem 1.5rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  flex-shrink: 0;
+  margin-top: 1.5rem; /* Para alinhar com inputs de data/texto */
+}
+
+.filterButton:hover {
+  background-color: #246ba6;
+  transform: translateY(-1px);
+}
+
+.filterButton:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.addHolidayButton {
+  background-color: var(--cor-verde-esmeralda);
+  color: var(--cor-branco-puro);
+  padding: 0.8rem 1.5rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: bold;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+  margin-left: auto; /* Empurra o botão para a direita em desktop */
+  margin-top: 1.5rem; /* Alinha com os inputs */
+}
+
+.addHolidayButton:hover {
+  background-color: #266429;
+  transform: translateY(-1px);
+}
+
+.errorMessage {
+  color: var(--cor-vermelho-rubi);
+  background-color: #ffebee;
+  border: 1px solid var(--cor-vermelho-rubi);
+  padding: 0.8rem;
+  border-radius: 5px;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+/* Table Section */
+.tableSection {
+  background-color: var(--cor-branco-puro);
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  overflow-x: auto;
+}
+
+.feriadosTable {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: auto;
+}
+
+.feriadosTable th,
+.feriadosTable td {
+  border: 1px solid #eee;
+  padding: 0.8rem 1rem;
+  text-align: left;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.feriadosTable th {
+  background-color: var(--cor-azul-noturno);
+  color: var(--cor-branco-puro);
+  font-weight: bold;
+}
+
+.feriadosTable tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.feriadosTable tr:hover {
+  background-color: #f0f0f0;
+}
+
+.noData {
+  text-align: center;
+  font-style: italic;
+  color: var(--cor-grafite);
+  padding: 2rem;
+}
+
+/* Actions in Table */
+.actions {
+  display: flex;
+  gap: 0.5rem;
+  white-space: nowrap;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.actionButton {
+  padding: 0.5rem 0.8rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.editButton {
+  background-color: var(--cor-azul-medio);
+  color: var(--cor-branco-puro);
+}
+.editButton:hover {
+  background-color: #246ba6;
+  transform: translateY(-1px);
+}
+
+.deleteButton {
+  background-color: var(--cor-vermelho-rubi);
+  color: var(--cor-branco-puro);
+}
+.deleteButton:hover {
+  background-color: #b72727;
+  transform: translateY(-1px);
+}
+
+/* Pagination - REUTILIZAÇÃO */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1rem;
+  gap: 1rem;
+}
+
+.paginationButton {
+  background-color: var(--cor-azul-medio);
+  color: var(--cor-branco-puro);
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.3s ease;
+}
+
+.paginationButton:hover {
+  background-color: #246ba6;
+}
+
+.paginationButton:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.pageInfo {
+  color: var(--cor-grafite);
+  font-size: 1rem;
+}
+
+/* Modal Styles - REUTILIZAÇÃO */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modalContent {
+  background-color: var(--cor-branco-puro);
+  padding: 2.5rem;
+  border-radius: 8px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+  max-width: 500px; /* Um pouco mais estreito que outros modais, se preferir */
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+.modalTitle {
+  color: var(--cor-azul-noturno);
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.inputGroup {
+  margin-bottom: 1rem;
+  text-align: left;
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.cancelButton {
+  background-color: #ccc;
+  color: var(--cor-grafite);
+  padding: 0.8rem 1.5rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.cancelButton:hover {
+  background-color: #b3b3b3;
+}
+
+.saveButton {
+  background-color: var(--cor-azul-medio);
+  color: var(--cor-branco-puro);
+  padding: 0.8rem 1.5rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.saveButton:hover {
+  background-color: #246ba6;
+}
+
+.saveButton:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+
+/* Responsividade geral da página */
+@media (max-width: 1024px) {
+  .feriadosTable th,
+  .feriadosTable td {
+    padding: 0.7rem 0.9rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .feriadosMain {
+    padding: 1.5rem;
+    gap: 1rem;
+  }
+
+  .topControls {
+    flex-direction: column; /* Empilha filtros e botões */
+    align-items: stretch;
+  }
+
+  .filterGroup {
+    min-width: unset;
+    width: 100%;
+  }
+
+  .filterButton, .addHolidayButton {
+    width: 100%;
+    margin-top: 0.5rem; /* Ajuste para espaçamento entre botões empilhados */
+    margin-left: 0; /* Remove o auto-margin para empurrar para direita */
+  }
+  .filterButton:first-of-type { /* Se houver um primeiro botão */
+    margin-top: 1.5rem; /* Mantém a margem do topo */
+  }
+
+
+  .feriadosTable th,
+  .feriadosTable td {
+    padding: 0.6rem 0.8rem;
+    font-size: 0.9rem;
+  }
+
+  .actions {
+    flex-direction: column; /* Empilha os botões de ação */
+    gap: 0.4rem;
+  }
+
+  .actionButton {
+    width: 100%;
+    padding: 0.6rem;
+    font-size: 0.8rem;
+  }
+
+  .modalContent {
+    padding: 1.5rem;
+  }
+  .modalTitle {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .modalActions {
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+  .modalActions button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+  .feriadosMain {
+    padding: 1rem;
+  }
+
+  .pageTitle {
+    font-size: 1.6rem;
+    margin-bottom: 1rem;
+  }
+
+  .topControls {
+    padding: 1rem;
+  }
+
+  .input, .filterButton, .addHolidayButton, .modalActions button {
+    padding: 0.7rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  .feriadosTable th,
+  .feriadosTable td {
+    padding: 0.5rem 0.7rem;
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .pageTitle {
+    font-size: 1.4rem;
+  }
+
+  .modalContent {
+    padding: 1rem;
+  }
+  .modalTitle {
+    font-size: 1.3rem;
+  }
+}

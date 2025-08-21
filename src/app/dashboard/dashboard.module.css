@@ -1,0 +1,688 @@
+/* src/app/dashboard/dashboard.module.css */
+
+/* Loading and Error States - Sem alterações */
+.loadingContainer, .errorContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 60px);
+  background-color: var(--cor-cinza-neutro);
+  font-size: 1rem;
+  color: var(--cor-grafite);
+  text-align: center;
+  padding: 0.8rem;
+  transition: opacity 0.5s ease-in-out;
+}
+
+.spinner {
+  border: 5px solid var(--cor-azul-medio);
+  border-right-color: transparent;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 0.8s linear infinite;
+  margin-bottom: 1.5rem;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loadingText, .errorText {
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+  animation: pulse 1.5s infinite alternate;
+}
+
+@keyframes pulse {
+  from { opacity: 0.7; }
+  to { opacity: 1; }
+}
+
+.errorText {
+    color: var(--cor-vermelho-rubi);
+    font-weight: bold;
+}
+
+.reloadButton {
+  background-color: var(--cor-azul-medio);
+  color: var(--cor-branco-puro);
+  padding: 0.7rem 1.2rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 0.8rem;
+  font-size: 0.9rem;
+  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.reloadButton:hover {
+  background-color: #246ba6;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+.reloadButton:active {
+  transform: translateY(0);
+}
+
+
+/* Main Dashboard Layout - Sem alterações significativas */
+.dashboardMain {
+  padding: 1.2rem;
+  background-color: var(--cor-cinza-neutro);
+  min-height: calc(100vh - 80px);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  overflow: hidden;
+  height: calc(100vh - 80px);
+  opacity: 0;
+  animation: fadeIn 0.8s forwards ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.pageTitle {
+  color: var(--cor-azul-noturno);
+  font-size: 1.8rem;
+  text-align: center;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  flex-shrink: 0;
+}
+
+/* Two-Column Layout for Dashboard - Sem alterações significativas */
+.dashboardLayout {
+  display: flex;
+  gap: 1.2rem;
+  align-items: stretch;
+  flex-grow: 1;
+}
+
+.dashboardContent {
+  flex: 3;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-width: 0;
+  overflow-y: auto;
+  height: 100%;
+  padding-right: 0.5rem;
+  scrollbar-width: thin;
+  scrollbar-color: var(--cor-azul-medio) var(--cor-cinza-neutro);
+}
+
+.dashboardContent::-webkit-scrollbar {
+  width: 8px;
+}
+.dashboardContent::-webkit-scrollbar-track {
+  background: var(--cor-cinza-neutro);
+  border-radius: 10px;
+}
+.dashboardContent::-webkit-scrollbar-thumb {
+  background-color: var(--cor-azul-medio);
+  border-radius: 10px;
+  border: 2px solid var(--cor-cinza-neutro);
+}
+
+
+.dashboardSidebar {
+  flex: 1;
+  max-width: 250px;
+  min-width: 200px;
+  position: sticky;
+  top: 90px;
+  align-self: stretch;
+  padding-bottom: 0;
+  height: 100%;
+  padding-right: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* KPIs Section - Sem alterações significativas */
+.kpiCards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  flex-grow: 1;
+  align-items: stretch;
+}
+
+.kpiCard {
+  background-color: var(--cor-branco-puro);
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  text-align: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 120px;
+  border: 1px solid var(--cor-cinza-neutro);
+  position: relative;
+  overflow: hidden;
+}
+
+.kpiCard::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background-color: transparent;
+    transition: background-color 0.3s ease;
+}
+
+.kpiCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+  border-color: transparent;
+}
+
+/* Cores específicas para cartões KPI e suas bordas/ícones */
+.kpiCardActive {
+    border-bottom: 3px solid var(--cor-verde-esmeralda);
+}
+.kpiCardActive .kpiIcon { color: var(--cor-verde-esmeralda); }
+.kpiCardActive:hover::before { background-color: var(--cor-verde-esmeralda); }
+
+.kpiCardWarning {
+    border-bottom: 3px solid var(--cor-ambar);
+}
+.kpiCardWarning .kpiIcon { color: var(--cor-ambar); }
+.kpiCardWarning:hover::before { background-color: var(--cor-ambar); }
+
+.kpiCardSuccess {
+    border-bottom: 3px solid var(--cor-verde-esmeralda);
+}
+.kpiCardSuccess .kpiIcon { color: var(--cor-verde-esmeralda); }
+.kpiCardSuccess:hover::before { background-color: var(--cor-verde-esmeralda); }
+
+.kpiCardInfo {
+    border-bottom: 3px solid var(--cor-azul-noturno);
+}
+.kpiCardInfo .kpiIcon { color: var(--cor-azul-noturno); }
+.kpiCardInfo:hover::before { background-color: var(--cor-azul-noturno); }
+
+
+.kpiIcon {
+    font-size: 2.2rem;
+    margin-bottom: 0.4rem;
+    transition: transform 0.3s ease;
+}
+
+.kpiCard:hover .kpiIcon {
+    transform: scale(1.1);
+}
+
+.kpiTitle {
+  color: var(--cor-azul-noturno);
+  font-size: 0.95rem;
+  margin-bottom: 0.3rem;
+  font-weight: bold;
+  line-height: 1.2;
+}
+
+.kpiValue {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: var(--cor-azul-medio);
+  margin-bottom: 0.2rem;
+}
+
+.kpiValueSm {
+  font-size: 1rem;
+  font-weight: bold;
+  color: var(--cor-grafite);
+  margin-bottom: 0.2rem;
+}
+
+.kpiFilter {
+  font-size: 0.75rem;
+  color: var(--cor-grafite);
+  opacity: 0.8;
+  white-space: nowrap;
+}
+
+/* Charts Section - Sem alterações significativas */
+.chartsSection {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+  flex-grow: 1;
+  align-items: stretch;
+}
+
+.chartCard {
+  background-color: var(--cor-branco-puro);
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  min-height: 280px;
+  overflow: hidden;
+  position: relative;
+}
+
+.chartTitle {
+  color: var(--cor-azul-noturno);
+  font-size: 1.1rem;
+  margin-bottom: 0.8rem;
+  text-align: center;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+/* Ajustes para a área dos gráficos Recharts */
+.recharts-wrapper {
+    overflow: visible !important;
+}
+.recharts-surface {
+    overflow: visible !important;
+}
+
+/* Quick Links Section (Inside Sidebar) - Apenas remoção de text-decoration */
+.quickLinks {
+  background-color: var(--cor-branco-puro);
+  padding: 0.8rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  flex-grow: 1;
+}
+
+.sectionTitle {
+  color: var(--cor-azul-noturno);
+  font-size: 1.1rem;
+  margin-bottom: 0;
+  text-align: center;
+  font-weight: bold;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #eee;
+}
+
+.linksGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.5rem;
+  flex-grow: 1;
+  align-items: stretch;
+}
+
+.quickLinkItem {
+  background-color: var(--cor-cinza-neutro);
+  padding: 0.5rem;
+  border-radius: 6px;
+  color: var(--cor-grafite);
+  transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2rem;
+  min-height: 75px;
+  text-align: center;
+  border: 1px solid transparent;
+  /* Reset de estilos para <button> */
+  font-family: inherit;
+  font-size: inherit;
+  cursor: pointer;
+  width: 100%;
+}
+
+.quickLinkItem:hover {
+  background-color: #d8dee3;
+  transform: translateY(-2px);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+  border-color: var(--cor-azul-medio);
+  text-decoration: underline;
+}
+
+.quickLinkIcon {
+  font-size: 1.8rem;
+  color: var(--cor-azul-medio);
+  transition: transform 0.3s ease;
+}
+
+.quickLinkItem:hover .quickLinkIcon {
+    transform: scale(1.1);
+}
+
+.quickLinkItem h3 {
+  color: var(--cor-azul-noturno);
+  font-size: 0.9rem;
+  margin: 0;
+  line-height: 1.2;
+  font-weight: bold;
+}
+
+/* --- ADICIONADO: ESTILOS DO MODAL --- */
+/* Estilos reutilizados de outras páginas para consistência */
+
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modalContent {
+  background-color: var(--cor-branco-puro);
+  padding: 2.5rem;
+  border-radius: 8px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+  max-width: 500px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+.modalTitle {
+  color: var(--cor-azul-noturno);
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.inputGroup {
+  margin-bottom: 1.5rem;
+  text-align: left;
+}
+
+.label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--cor-grafite);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.input {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
+  color: var(--cor-grafite);
+  outline: none;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.input:focus {
+  border-color: var(--cor-azul-medio);
+  box-shadow: 0 0 0 3px rgba(45, 130, 183, 0.2);
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.cancelButton {
+  background-color: #ccc;
+  color: var(--cor-grafite);
+  padding: 0.8rem 1.5rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.cancelButton:hover {
+  background-color: #b3b3b3;
+}
+
+.saveButton {
+  background-color: var(--cor-azul-medio);
+  color: var(--cor-branco-puro);
+  padding: 0.8rem 1.5rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.saveButton:hover {
+  background-color: #246ba6;
+}
+
+.saveButton:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+/* --- FIM DOS ESTILOS DO MODAL --- */
+
+
+/* Responsividade - Sem alterações significativas */
+@media (max-width: 1200px) {
+    .dashboardMain {
+        padding: 0.8rem;
+    }
+    .dashboardLayout {
+        gap: 0.6rem;
+    }
+    .dashboardSidebar {
+        max-width: 200px;
+        min-width: 160px;
+        top: 80px;
+    }
+    .pageTitle {
+        font-size: 1.4rem;
+    }
+    .kpiCards {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 0.6rem;
+    }
+    .kpiCard {
+        padding: 0.7rem;
+        min-height: 90px;
+    }
+    .kpiTitle {
+        font-size: 0.8rem;
+    }
+    .kpiValue {
+        font-size: 1.8rem;
+    }
+    .kpiValueSm {
+        font-size: 0.75rem;
+    }
+    .kpiIcon {
+        font-size: 1.8rem;
+    }
+    .chartsSection {
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 0.8rem;
+    }
+    .chartCard {
+        padding: 0.7rem;
+        min-height: 180px;
+    }
+    .chartTitle {
+        font-size: 0.9rem;
+    }
+    .sectionTitle {
+        font-size: 0.95rem;
+    }
+    .quickLinks {
+        padding: 0.6rem;
+    }
+    .quickLinkItem {
+        padding: 0.5rem;
+        min-height: 60px;
+        gap: 0.2rem;
+    }
+    .quickLinkIcon {
+        font-size: 1.4rem;
+    }
+    .quickLinkItem h3 {
+        font-size: 0.75rem;
+    }
+}
+
+@media (max-width: 1024px) {
+  .dashboardMain {
+    padding: 0.8rem;
+    gap: 0.6rem;
+    overflow-y: auto;
+    height: unset;
+  }
+  .pageTitle {
+    font-size: 1.2rem;
+    margin-bottom: 0.4rem;
+  }
+  .dashboardLayout {
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+
+  .dashboardContent {
+    flex: auto;
+    width: 100%;
+    overflow-y: unset;
+    padding-right: 0;
+  }
+
+  .dashboardSidebar {
+    position: relative;
+    top: unset;
+    max-width: unset;
+    min-width: unset;
+    width: 100%;
+    order: -1;
+    padding-bottom: 0;
+    overflow-y: unset;
+    padding-right: 0;
+    flex-grow: unset;
+  }
+
+  .kpiCards, .chartsSection {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 0.6rem;
+  }
+
+  .quickLinks {
+      padding: 0.8rem;
+  }
+  .sectionTitle {
+      font-size: 1.1rem;
+      margin-bottom: 0.6rem;
+      border-bottom: none;
+      padding-bottom: 0;
+  }
+  .linksGrid {
+    grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+    gap: 0.5rem;
+  }
+
+  .quickLinkItem {
+      flex-direction: column;
+      text-align: center;
+      justify-content: center;
+      min-height: 65px;
+      gap: 0.2rem;
+      padding: 0.5rem 0.4rem;
+  }
+  .quickLinkIcon {
+      font-size: 1.4rem;
+  }
+  .quickLinkItem h3 {
+      font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboardMain {
+    padding: 0.6rem;
+    gap: 0.5rem;
+  }
+  .pageTitle {
+    font-size: 1.05rem;
+  }
+  .kpiCards, .chartsSection, .linksGrid {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+  .kpiCard, .chartCard, .quickLinkItem {
+    padding: 0.6rem;
+  }
+  .kpiTitle {
+    font-size: 0.75rem;
+  }
+  .kpiValue {
+    font-size: 1.4rem;
+  }
+  .kpiValueSm {
+    font-size: 0.7rem;
+  }
+  .chartTitle {
+    font-size: 0.85rem;
+  }
+  .sectionTitle {
+    font-size: 0.9rem;
+  }
+  .quickLinkItem {
+      min-height: 55px;
+  }
+  .quickLinkIcon {
+      font-size: 1.2rem;
+  }
+  .quickLinkItem h3 {
+      font-size: 0.65rem;
+  }
+  /* ADICIONADO: Responsividade do Modal */
+  .modalContent {
+    padding: 1.5rem;
+  }
+  .modalTitle {
+    font-size: 1.5rem;
+  }
+  .modalActions {
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+  .modalActions button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboardMain {
+    padding: 0.4rem;
+    gap: 0.4rem;
+  }
+  .pageTitle {
+    font-size: 0.95rem;
+  }
+  .kpiCard, .chartCard, .quickLinkItem {
+    padding: 0.5rem;
+  }
+  .kpiIcon {
+      font-size: 1rem;
+  }
+  .quickLinkItem h3 {
+      font-size: 0.6rem;
+  }
+}

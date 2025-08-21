@@ -1,0 +1,149 @@
+/* src/app/login/login.module.css */
+
+.loginContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: var(--cor-cinza-neutro); /* Fundo da página de login */
+  padding: 2rem;
+}
+
+.loginCard {
+  background-color: var(--cor-branco-puro);
+  padding: 3rem 4rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  width: 100%;
+  max-width: 450px; /* Largura máxima do card de login */
+}
+
+.title {
+  color: var(--cor-azul-noturno);
+  font-size: 2.2rem;
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  color: var(--cor-grafite);
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+}
+
+.loginForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem; /* Espaçamento entre os grupos de input */
+}
+
+.inputGroup {
+  text-align: left;
+}
+
+.label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--cor-grafite);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.input {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
+  color: var(--cor-grafite);
+  outline: none;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.input::placeholder {
+  color: var(--cor-grafite);
+  opacity: 0.7;
+}
+
+.input:focus {
+  border-color: var(--cor-azul-medio);
+  box-shadow: 0 0 0 3px rgba(45, 130, 183, 0.2); /* Sombra suave com cor primária */
+}
+
+.passwordInputWrapper {
+  position: relative;
+}
+
+.togglePassword {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--cor-azul-medio);
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 0.2rem;
+  transition: color 0.2s ease;
+}
+
+.togglePassword:hover {
+  color: #246ba6;
+}
+
+.errorMessage {
+  color: var(--cor-vermelho-rubi);
+  font-size: 0.9rem;
+  margin-top: -1rem; /* Ajusta o espaçamento se houver erro */
+  text-align: center;
+}
+
+.loginButton {
+  background-color: var(--cor-azul-medio);
+  color: var(--cor-branco-puro);
+  padding: 1rem 1.5rem;
+  border: none;
+  border-radius: 5px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  width: 100%;
+}
+
+.loginButton:hover {
+  background-color: #246ba6; /* Um tom ligeiramente mais escuro */
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.forgotPasswordLink {
+  color: var(--cor-azul-medio);
+  font-size: 0.9rem;
+  text-decoration: none;
+  margin-top: 1rem;
+  display: block; /* Garante que o link ocupe sua própria linha */
+  transition: color 0.3s ease;
+}
+
+.forgotPasswordLink:hover {
+  text-decoration: underline;
+  color: #246ba6;
+}
+
+/* Responsividade básica */
+@media (max-width: 600px) {
+  .loginCard {
+    padding: 2rem;
+    margin: 1rem;
+  }
+
+  .title {
+    font-size: 1.8rem;
+  }
+
+  .subtitle {
+    font-size: 1rem;
+  }
+}
