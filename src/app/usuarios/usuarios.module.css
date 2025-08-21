@@ -3,7 +3,7 @@
 .usuariosMain {
   padding: 2rem;
   background-color: var(--cor-cinza-neutro);
-  min-height: calc(100vh - 80px); /* Ajusta para considerar a altura do Header */
+  min-height: calc(100vh - 80px);
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
@@ -16,24 +16,22 @@
   text-align: center;
 }
 
-/* Top Controls (Search and Add Button) */
+/* Container para filtros primários (Busca e Botão Adicionar) */
 .topControls {
   background-color: var(--cor-branco-puro);
   padding: 1.5rem;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  margin-bottom: 0.5rem;
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: center;
   gap: 1rem;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .searchContainer {
   display: flex;
   flex-grow: 1;
-  gap: 0.5rem;
   min-width: 250px;
 }
 
@@ -46,35 +44,6 @@
   color: var(--cor-grafite);
   outline: none;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-.searchInput:focus {
-  border-color: var(--cor-azul-medio);
-  box-shadow: 0 0 0 3px rgba(45, 130, 183, 0.2);
-}
-
-.searchButton {
-  background-color: var(--cor-azul-medio);
-  color: var(--cor-branco-puro);
-  padding: 0.8rem 1.2rem;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 1rem;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-  flex-shrink: 0;
-}
-
-.searchButton:hover {
-  background-color: #246ba6;
-  transform: translateY(-1px);
-}
-
-.searchButton:disabled {
-  background-color: #cccccc;
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
 }
 
 .addUserButton {
@@ -96,13 +65,41 @@
   transform: translateY(-1px);
 }
 
+/* Container para filtros secundários (rápidos, no front-end) */
+.filterContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
+}
+
+.filterSelect {
+  flex: 1 1 180px;
+  padding: 0.8rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 0.95rem;
+  color: var(--cor-grafite);
+  outline: none;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  background-color: var(--cor-branco-puro);
+  cursor: pointer;
+}
+
+.searchInput:focus, .filterSelect:focus {
+  border-color: var(--cor-azul-medio);
+  box-shadow: 0 0 0 3px rgba(45, 130, 183, 0.2);
+}
+
 .errorMessage {
   color: var(--cor-vermelho-rubi);
   background-color: #ffebee;
   border: 1px solid var(--cor-vermelho-rubi);
   padding: 0.8rem;
   border-radius: 5px;
-  margin-bottom: 1.5rem;
   text-align: center;
 }
 
@@ -121,8 +118,7 @@
   table-layout: auto;
 }
 
-.usuariosTable th,
-.usuariosTable td {
+.usuariosTable th, .usuariosTable td {
   border: 1px solid #eee;
   padding: 0.8rem 1rem;
   text-align: left;
@@ -136,346 +132,72 @@
   font-weight: bold;
 }
 
-.usuariosTable tr:nth-child(even) {
-  background-color: #f9f9f9;
-}
+.usuariosTable tr:nth-child(even) { background-color: #f9f9f9; }
+.usuariosTable tr:hover { background-color: #f0f0f0; }
+.noData { text-align: center; font-style: italic; color: var(--cor-grafite); padding: 2rem; }
 
-.usuariosTable tr:hover {
-  background-color: #f0f0f0;
-}
+.statusActive { font-weight: bold; color: var(--cor-verde-esmeralda); }
+.statusInactive { font-weight: bold; color: var(--cor-grafite); }
 
-.noData {
-  text-align: center;
-  font-style: italic;
-  color: var(--cor-grafite);
-  padding: 2rem;
-}
+.actions { display: flex; gap: 0.5rem; white-space: nowrap; }
+.actionButton { padding: 0.5rem 0.8rem; border: none; border-radius: 5px; cursor: pointer; font-size: 0.8rem; transition: background-color 0.3s ease, transform 0.2s ease; }
+.editButton { background-color: var(--cor-azul-medio); color: var(--cor-branco-puro); }
+.editButton:hover { background-color: #246ba6; transform: translateY(-1px); }
+.activateButton { background-color: var(--cor-verde-esmeralda); color: var(--cor-branco-puro); }
+.activateButton:hover { background-color: #266429; transform: translateY(-1px); }
+.deactivateButton { background-color: var(--cor-vermelho-rubi); color: var(--cor-branco-puro); }
+.deactivateButton:hover { background-color: #b72727; transform: translateY(-1px); }
 
-/* Status Badges */
-.statusActive {
-  font-weight: bold;
-  color: var(--cor-verde-esmeralda);
-}
+/* Pagination */
+.pagination { display: flex; justify-content: center; align-items: center; margin-top: 1rem; gap: 1rem; }
+.paginationButton { background-color: var(--cor-azul-medio); color: var(--cor-branco-puro); padding: 0.6rem 1.2rem; border: none; border-radius: 5px; cursor: pointer; font-size: 0.9rem; transition: background-color 0.3s ease; }
+.paginationButton:hover { background-color: #246ba6; }
+.paginationButton:disabled { background-color: #cccccc; cursor: not-allowed; }
+.pageInfo { color: var(--cor-grafite); font-size: 1rem; }
 
-.statusInactive {
-  font-weight: bold;
-  color: var(--cor-grafite);
-}
+/* Modal Styles */
+.modalOverlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.6); display: flex; justify-content: center; align-items: center; z-index: 1000; }
+.modalContent { background-color: var(--cor-branco-puro); padding: 2.5rem; border-radius: 8px; box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2); max-width: 500px; width: 90%; max-height: 90vh; overflow-y: auto; position: relative; }
+.modalTitle { color: var(--cor-azul-noturno); font-size: 1.8rem; margin-bottom: 1.5rem; text-align: center; }
+.inputGroup { margin-bottom: 1rem; text-align: left; }
+.label { display: block; margin-bottom: 0.5rem; color: var(--cor-grafite); font-size: 0.9rem; font-weight: 600; }
+.input { width: 100%; padding: 0.8rem 1rem; border: 1px solid #ccc; border-radius: 5px; font-size: 1rem; color: var(--cor-grafite); outline: none; transition: border-color 0.3s ease, box-shadow 0.3s ease; }
+.checkbox { margin-right: 0.5rem; }
+.checkboxLabel { display: inline-block; vertical-align: middle; cursor: pointer; color: var(--cor-grafite); font-size: 1rem; }
+.modalActions { display: flex; justify-content: flex-end; gap: 1rem; margin-top: 2rem; }
+.cancelButton { background-color: #ccc; color: var(--cor-grafite); padding: 0.8rem 1.5rem; border: none; border-radius: 5px; cursor: pointer; font-size: 1rem; transition: background-color 0.3s ease; }
+.cancelButton:hover { background-color: #b3b3b3; }
+.saveButton { background-color: var(--cor-azul-medio); color: var(--cor-branco-puro); padding: 0.8rem 1.5rem; border: none; border-radius: 5px; cursor: pointer; font-size: 1rem; transition: background-color 0.3s ease; }
+.saveButton:hover { background-color: #246ba6; }
+.saveButton:disabled { background-color: #cccccc; cursor: not-allowed; }
 
-/* Actions in Table */
-.actions {
-  display: flex;
-  flex-wrap: wrap; /* Permite que os botões quebrem em múltiplas linhas */
-  gap: 0.5rem;
-  justify-content: flex-start;
-  align-items: center;
-}
-
-.actionButton {
-  padding: 0.5rem 0.8rem;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 0.8rem;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-  white-space: nowrap;
-  flex-shrink: 0;
-  text-align: center;
-  line-height: 1;
-}
-
-.editButton {
-  background-color: var(--cor-azul-medio);
-  color: var(--cor-branco-puro);
-}
-.editButton:hover {
-  background-color: #246ba6;
-  transform: translateY(-1px);
-}
-
-.activateButton {
-  background-color: var(--cor-verde-esmeralda);
-  color: var(--cor-branco-puro);
-}
-.activateButton:hover {
-  background-color: #266429;
-  transform: translateY(-1px);
-}
-
-.deactivateButton {
-  background-color: var(--cor-vermelho-rubi);
-  color: var(--cor-branco-puro);
-}
-.deactivateButton:hover {
-  background-color: #b72727;
-  transform: translateY(-1px);
-}
-
-.changePasswordButton {
-  background-color: #6c757d; /* Cinza para mudar senha */
-  color: var(--cor-branco-puro);
-}
-.changePasswordButton:hover {
-  background-color: #5a6268;
-  transform: translateY(-1px);
-}
-
-
-/* Pagination - REUTILIZAÇÃO */
-.pagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 1rem;
-  gap: 1rem;
-}
-
-.paginationButton {
-  background-color: var(--cor-azul-medio);
-  color: var(--cor-branco-puro);
-  padding: 0.6rem 1.2rem;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 0.9rem;
-  transition: background-color 0.3s ease;
-}
-
-.paginationButton:hover {
-  background-color: #246ba6;
-}
-
-.paginationButton:disabled {
-  background-color: #cccccc;
-  cursor: not-allowed;
-}
-
-.pageInfo {
-  color: var(--cor-grafite);
-  font-size: 1rem;
-}
-
-/* Modal Styles - REUTILIZAÇÃO */
-.modalOverlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.6);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.modalContent {
-  background-color: var(--cor-branco-puro);
-  padding: 2.5rem;
-  border-radius: 8px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
-  max-width: 500px;
-  width: 90%;
-  max-height: 90vh;
-  overflow-y: auto;
-  position: relative;
-}
-
-.modalTitle {
-  color: var(--cor-azul-noturno);
-  font-size: 1.8rem;
-  margin-bottom: 1.5rem;
-  text-align: center;
-}
-
-.inputGroup {
-  margin-bottom: 1rem;
-  text-align: left;
-}
-
-.label {
-  display: block;
-  margin-bottom: 0.5rem;
-  color: var(--cor-grafite);
-  font-size: 0.9rem;
-  font-weight: 600;
-}
-
-.input {
-  width: 100%;
-  padding: 0.8rem 1rem;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 1rem;
-  color: var(--cor-grafite);
-  outline: none;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-.input:focus {
-  border-color: var(--cor-azul-medio);
-  box-shadow: 0 0 0 3px rgba(45, 130, 183, 0.2);
-}
-
-.checkbox {
-  margin-right: 0.5rem;
-}
-
-.checkboxLabel {
-  display: inline-block;
-  vertical-align: middle;
-  cursor: pointer;
-  color: var(--cor-grafite);
-  font-size: 1rem;
-}
-
-
-.modalActions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 1rem;
-  margin-top: 2rem;
-}
-
-.cancelButton {
-  background-color: #ccc;
-  color: var(--cor-grafite);
-  padding: 0.8rem 1.5rem;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 1rem;
-  transition: background-color 0.3s ease;
-}
-
-.cancelButton:hover {
-  background-color: #b3b3b3;
-}
-
-.saveButton {
-  background-color: var(--cor-azul-medio);
-  color: var(--cor-branco-puro);
-  padding: 0.8rem 1.5rem;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 1rem;
-  transition: background-color 0.3s ease;
-}
-
-.saveButton:hover {
-  background-color: #246ba6;
-}
-
-.saveButton:disabled {
-  background-color: #cccccc;
-  cursor: not-allowed;
-}
-
-
-/* Responsividade geral da página */
-@media (max-width: 1024px) {
-  .usuariosTable th,
-  .usuariosTable td {
-    padding: 0.7rem 0.9rem;
-  }
-}
-
+/* Responsividade */
 @media (max-width: 768px) {
-  .usuariosMain {
-    padding: 1.5rem;
-    gap: 1rem;
-  }
-
-  .topControls {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .searchContainer {
-    width: 100%;
-    min-width: unset;
-  }
-
-  .addUserButton {
-    width: 100%;
-  }
-
-  .usuariosTable th,
-  .usuariosTable td {
-    padding: 0.6rem 0.8rem;
-    font-size: 0.9rem;
-  }
-
-  .actions {
-    flex-direction: column; /* Empilha os botões de ação */
-    gap: 0.4rem;
-  }
-
-  .actionButton {
-    width: 100%;
-    padding: 0.6rem;
-    font-size: 0.8rem;
-  }
-
-  .modalContent {
-    padding: 1.5rem;
-  }
-  .modalTitle {
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
-  }
-  .modalActions {
-    flex-direction: column;
-    gap: 0.8rem;
-  }
-  .modalActions button {
-    width: 100%;
-  }
+  .usuariosMain { padding: 1.5rem; gap: 1rem; }
+  .topControls, .filterContainer { flex-direction: column; align-items: stretch; }
+  .searchContainer { width: 100%; min-width: unset; }
+  .addUserButton { width: 100%; }
+  .usuariosTable th, .usuariosTable td { padding: 0.6rem 0.8rem; font-size: 0.9rem; }
+  .actions { flex-direction: column; gap: 0.4rem; }
+  .actionButton { width: 100%; padding: 0.6rem; font-size: 0.8rem; }
+  .modalContent { padding: 1.5rem; }
+  .modalTitle { font-size: 1.5rem; margin-bottom: 1rem; }
+  .modalActions { flex-direction: column; gap: 0.8rem; }
+  .modalActions button { width: 100%; }
 }
 
 @media (max-width: 600px) {
-  .usuariosMain {
-    padding: 1rem;
-  }
-
-  .pageTitle {
-    font-size: 1.6rem;
-    margin-bottom: 1rem;
-  }
-
-  .topControls {
-    padding: 1rem;
-  }
-
-  .searchInput, .searchButton, .addUserButton {
-    padding: 0.7rem 1rem;
-    font-size: 0.9rem;
-  }
-
-  .usuariosTable th,
-  .usuariosTable td {
-    padding: 0.5rem 0.7rem;
-    font-size: 0.85rem;
-  }
+  .usuariosMain { padding: 1rem; }
+  .pageTitle { font-size: 1.6rem; margin-bottom: 1rem; }
+  .topControls, .filterContainer { padding: 1rem; }
+  .searchInput, .addUserButton, .filterSelect { padding: 0.7rem 1rem; font-size: 0.9rem; }
+  .usuariosTable th, .usuariosTable td { padding: 0.5rem 0.7rem; font-size: 0.85rem; }
 }
 
 @media (max-width: 400px) {
-  .pageTitle {
-    font-size: 1.4rem;
-  }
-
-  .modalContent {
-    padding: 1rem;
-  }
-  .modalTitle {
-    font-size: 1.3rem;
-  }
-  .input, .modalActions button {
-    padding: 0.7rem 1rem;
-    font-size: 0.9rem;
-  }
-  .checkboxLabel {
-    font-size: 0.9rem;
-  }
+  .pageTitle { font-size: 1.4rem; }
+  .modalContent { padding: 1rem; }
+  .modalTitle { font-size: 1.3rem; }
+  .input, .modalActions button { padding: 0.7rem 1rem; font-size: 0.9rem; }
+  .checkboxLabel { font-size: 0.9rem; }
 }

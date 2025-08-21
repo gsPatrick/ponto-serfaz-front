@@ -3,7 +3,7 @@
 .funcionariosMain {
   padding: 2rem;
   background-color: var(--cor-cinza-neutro);
-  min-height: calc(100vh - 80px); /* Ajusta para considerar a altura do Header */
+  min-height: calc(100vh - 80px);
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
@@ -16,25 +16,23 @@
   text-align: center;
 }
 
-/* Top Controls (Search and Add Button) */
+/* Container para filtros primários (Busca e Botão Adicionar) */
 .topControls {
   background-color: var(--cor-branco-puro);
   padding: 1.5rem;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  margin-bottom: 0.5rem;
   display: flex;
-  flex-wrap: wrap; /* Permite que os itens quebrem */
-  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
   align-items: center;
-  gap: 1rem; /* Espaçamento entre os itens */
+  justify-content: space-between;
 }
 
 .searchContainer {
   display: flex;
-  flex-grow: 1; /* Permite que a busca ocupe mais espaço */
-  gap: 0.5rem;
-  min-width: 250px; /* Largura mínima para a barra de busca */
+  flex-grow: 1;
+  min-width: 250px;
 }
 
 .searchInput {
@@ -48,11 +46,6 @@
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-.searchInput:focus {
-  border-color: var(--cor-azul-medio);
-  box-shadow: 0 0 0 3px rgba(45, 130, 183, 0.2);
-}
-
 .addEmployeeButton {
   background-color: var(--cor-verde-esmeralda);
   color: var(--cor-branco-puro);
@@ -63,7 +56,7 @@
   font-size: 1rem;
   font-weight: bold;
   transition: background-color 0.3s ease, transform 0.2s ease;
-  white-space: nowrap; /* Impede que o texto do botão quebre */
+  white-space: nowrap;
   flex-shrink: 0;
 }
 
@@ -72,20 +65,19 @@
   transform: translateY(-1px);
 }
 
-/* ESTILOS PARA O PAINEL DE FILTROS COM DROPDOWNS */
+/* Container para filtros secundários (rápidos, no front-end) */
 .filterContainer {
   display: flex;
   flex-wrap: wrap;
   gap: 1rem;
   padding: 1rem;
-  background-color: #f8f9fa; /* Cor de fundo suave */
+  background-color: #f8f9fa;
   border-radius: 8px;
   border: 1px solid #dee2e6;
-  margin-bottom: 0.5rem;
 }
 
-.filterSelect {
-  flex: 1 1 200px; /* Cresce, encolhe, com base de 200px */
+.filterInput, .filterSelect {
+  flex: 1 1 180px; /* Adapta-se ao espaço, base de 180px */
   padding: 0.8rem 1rem;
   border: 1px solid #ccc;
   border-radius: 5px;
@@ -93,11 +85,14 @@
   color: var(--cor-grafite);
   outline: none;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
-  background-color: var(--cor-branco-puro); /* Fundo branco para o select */
+}
+
+.filterSelect {
+  background-color: var(--cor-branco-puro);
   cursor: pointer;
 }
 
-.filterSelect:focus {
+.searchInput:focus, .filterInput:focus, .filterSelect:focus {
   border-color: var(--cor-azul-medio);
   box-shadow: 0 0 0 3px rgba(45, 130, 183, 0.2);
 }
@@ -108,7 +103,6 @@
   border: 1px solid var(--cor-vermelho-rubi);
   padding: 0.8rem;
   border-radius: 5px;
-  margin-bottom: 1.5rem;
   text-align: center;
 }
 
@@ -118,7 +112,11 @@
   padding: 1.5rem;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  overflow-x: auto; /* Permite rolagem horizontal para a tabela */
+  overflow-x: auto;
+}
+
+.tableWrapper {
+  /* Placeholder for potential custom scrollbar styles */
 }
 
 .funcionariosTable {
@@ -132,7 +130,7 @@
   border: 1px solid #eee;
   padding: 0.8rem 1rem;
   text-align: left;
-  white-space: nowrap; /* Impede que o texto quebre dentro da célula */
+  white-space: nowrap;
   vertical-align: middle;
 }
 
@@ -142,346 +140,95 @@
   font-weight: bold;
 }
 
-.funcionariosTable tr:nth-child(even) {
-  background-color: #f9f9f9;
-}
-
-.funcionariosTable tr:hover {
-  background-color: #f0f0f0;
-}
-
-.noData {
-  text-align: center;
-  font-style: italic;
-  color: var(--cor-grafite);
-  padding: 2rem;
-}
+.funcionariosTable tr:nth-child(even) { background-color: #f9f9f9; }
+.funcionariosTable tr:hover { background-color: #f0f0f0; }
+.noData { text-align: center; font-style: italic; color: var(--cor-grafite); padding: 2rem; }
 
 /* Status Badges */
-.statusActive {
-  font-weight: bold;
-  color: var(--cor-verde-esmeralda);
-}
+.statusActive { font-weight: bold; color: var(--cor-verde-esmeralda); }
+.statusInactive { font-weight: bold; color: var(--cor-grafite); }
 
-.statusInactive {
-  font-weight: bold;
-  color: var(--cor-grafite); /* Ou uma cor mais suave para desativado */
-}
-
+/* =================== ALTERAÇÃO PRINCIPAL AQUI =================== */
 /* Actions in Table */
 .actions {
   display: flex;
-  flex-wrap: wrap;
   gap: 0.5rem;
-  justify-content: flex-start;
-  align-items: center;
+  white-space: nowrap; /* FORÇA os botões a ficarem em uma única linha */
+  /* REMOVIDO: flex-wrap: wrap; */
+  /* REMOVIDO: justify-content e align-items desnecessários com nowrap */
 }
+/* ================================================================ */
 
-.actionButton {
-  padding: 0.5rem 0.8rem;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 0.8rem;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-  white-space: nowrap;
-  flex-shrink: 0;
-  display: inline-block;
-  text-align: center;
-  line-height: 1;
-}
-
-.editButton {
-  background-color: var(--cor-azul-medio);
-  color: var(--cor-branco-puro);
-}
-.editButton:hover {
-  background-color: #246ba6;
-  transform: translateY(-1px);
-}
-
-.activateButton {
-  background-color: var(--cor-verde-esmeralda);
-  color: var(--cor-branco-puro);
-}
-.activateButton:hover {
-  background-color: #266429;
-  transform: translateY(-1px);
-}
-
-.deactivateButton {
-  background-color: var(--cor-vermelho-rubi);
-  color: var(--cor-branco-puro);
-}
-.deactivateButton:hover {
-  background-color: #b72727;
-  transform: translateY(-1px);
-}
-
-.viewMarksButton, .viewInconsistenciesButton {
-  background-color: #6c757d; /* Cinza para ações secundárias */
-  color: var(--cor-branco-puro);
-  text-decoration: none; /* Já que são Links */
-}
-.viewMarksButton:hover, .viewInconsistenciesButton:hover {
-  background-color: #5a6268;
-  transform: translateY(-1px);
-}
-
+.actionButton { padding: 0.5rem 0.8rem; border: none; border-radius: 5px; cursor: pointer; font-size: 0.8rem; transition: background-color 0.3s ease, transform 0.2s ease; white-space: nowrap; flex-shrink: 0; display: inline-block; text-align: center; line-height: 1; }
+.editButton { background-color: var(--cor-azul-medio); color: var(--cor-branco-puro); }
+.editButton:hover { background-color: #246ba6; transform: translateY(-1px); }
+.activateButton { background-color: var(--cor-verde-esmeralda); color: var(--cor-branco-puro); }
+.activateButton:hover { background-color: #266429; transform: translateY(-1px); }
+.deactivateButton { background-color: var(--cor-vermelho-rubi); color: var(--cor-branco-puro); }
+.deactivateButton:hover { background-color: #b72727; transform: translateY(-1px); }
+.viewMarksButton, .viewInconsistenciesButton { background-color: #6c757d; color: var(--cor-branco-puro); text-decoration: none; }
+.viewMarksButton:hover, .viewInconsistenciesButton:hover { background-color: #5a6268; transform: translateY(-1px); }
 
 /* Pagination */
-.pagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 1rem;
-  gap: 1rem;
-}
-
-.paginationButton {
-  background-color: var(--cor-azul-medio);
-  color: var(--cor-branco-puro);
-  padding: 0.6rem 1.2rem;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 0.9rem;
-  transition: background-color 0.3s ease;
-}
-
-.paginationButton:hover {
-  background-color: #246ba6;
-}
-
-.paginationButton:disabled {
-  background-color: #cccccc;
-  cursor: not-allowed;
-}
-
-.pageInfo {
-  color: var(--cor-grafite);
-  font-size: 1rem;
-}
+.pagination { display: flex; justify-content: center; align-items: center; margin-top: 1rem; gap: 1rem; }
+.paginationButton { background-color: var(--cor-azul-medio); color: var(--cor-branco-puro); padding: 0.6rem 1.2rem; border: none; border-radius: 5px; cursor: pointer; font-size: 0.9rem; transition: background-color 0.3s ease; }
+.paginationButton:hover { background-color: #246ba6; }
+.paginationButton:disabled { background-color: #cccccc; cursor: not-allowed; }
+.pageInfo { color: var(--cor-grafite); font-size: 1rem; }
 
 /* Modal Styles */
-.modalOverlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.6);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
+.modalOverlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.6); display: flex; justify-content: center; align-items: center; z-index: 1000; }
+.modalContent { background-color: var(--cor-branco-puro); padding: 2.5rem; border-radius: 8px; box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2); max-width: 600px; width: 90%; max-height: 90vh; overflow-y: auto; position: relative; }
+.modalTitle { color: var(--cor-azul-noturno); font-size: 1.8rem; margin-bottom: 1.5rem; text-align: center; }
+.inputGroup { margin-bottom: 1rem; text-align: left; }
+.label { display: block; margin-bottom: 0.5rem; color: var(--cor-grafite); font-size: 0.9rem; font-weight: 600; }
+.input { width: 100%; padding: 0.8rem 1rem; border: 1px solid #ccc; border-radius: 5px; font-size: 1rem; color: var(--cor-grafite); outline: none; transition: border-color 0.3s ease, box-shadow 0.3s ease; }
+.checkbox { margin-right: 0.5rem; }
+.checkboxLabel { display: inline-block; vertical-align: middle; cursor: pointer; color: var(--cor-grafite); font-size: 1rem; }
+.modalActions { display: flex; justify-content: flex-end; gap: 1rem; margin-top: 2rem; }
+.cancelButton { background-color: #ccc; color: var(--cor-grafite); padding: 0.8rem 1.5rem; border: none; border-radius: 5px; cursor: pointer; font-size: 1rem; transition: background-color 0.3s ease; }
+.cancelButton:hover { background-color: #b3b3b3; }
+.saveButton { background-color: var(--cor-azul-medio); color: var(--cor-branco-puro); padding: 0.8rem 1.5rem; border: none; border-radius: 5px; cursor: pointer; font-size: 1rem; transition: background-color 0.3s ease; }
+.saveButton:hover { background-color: #246ba6; }
+.saveButton:disabled { background-color: #cccccc; cursor: not-allowed; }
 
-.modalContent {
-  background-color: var(--cor-branco-puro);
-  padding: 2.5rem;
-  border-radius: 8px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
-  max-width: 600px;
-  width: 90%;
-  max-height: 90vh;
-  overflow-y: auto;
-  position: relative;
-}
-
-.modalTitle {
-  color: var(--cor-azul-noturno);
-  font-size: 1.8rem;
-  margin-bottom: 1.5rem;
-  text-align: center;
-}
-
-.inputGroup {
-  margin-bottom: 1rem;
-  text-align: left;
-}
-
-.label {
-  display: block;
-  margin-bottom: 0.5rem;
-  color: var(--cor-grafite);
-  font-size: 0.9rem;
-  font-weight: 600;
-}
-
-.input {
-  width: 100%;
-  padding: 0.8rem 1rem;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 1rem;
-  color: var(--cor-grafite);
-  outline: none;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-.checkbox {
-  margin-right: 0.5rem;
-}
-
-.checkboxLabel {
-  display: inline-block;
-  vertical-align: middle;
-  cursor: pointer;
-  color: var(--cor-grafite);
-  font-size: 1rem;
-}
-
-.modalActions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 1rem;
-  margin-top: 2rem;
-}
-
-.cancelButton {
-  background-color: #ccc;
-  color: var(--cor-grafite);
-  padding: 0.8rem 1.5rem;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 1rem;
-  transition: background-color 0.3s ease;
-}
-
-.cancelButton:hover {
-  background-color: #b3b3b3;
-}
-
-.saveButton {
-  background-color: var(--cor-azul-medio);
-  color: var(--cor-branco-puro);
-  padding: 0.8rem 1.5rem;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 1rem;
-  transition: background-color 0.3s ease;
-}
-
-.saveButton:hover {
-  background-color: #246ba6;
-}
-
-.saveButton:disabled {
-  background-color: #cccccc;
-  cursor: not-allowed;
-}
-
-/* Responsividade geral da página */
+/* Responsividade */
 @media (max-width: 1024px) {
-  .funcionariosTable th,
-  .funcionariosTable td {
-    padding: 0.7rem 0.9rem;
-  }
+  .funcionariosTable th, .funcionariosTable td { padding: 0.7rem 0.9rem; }
 }
 
 @media (max-width: 768px) {
-  .funcionariosMain {
-    padding: 1.5rem;
-    gap: 1rem;
+  .funcionariosMain { padding: 1.5rem; gap: 1rem; }
+  .topControls, .filterContainer { flex-direction: column; align-items: stretch; }
+  .searchContainer { width: 100%; min-width: unset; }
+  .addEmployeeButton { width: 100%; }
+  .funcionariosTable th, .funcionariosTable td { padding: 0.6rem 0.8rem; font-size: 0.9rem; }
+  .actions { /* Em telas menores, a quebra de linha pode ser desejável novamente, ou manter em linha e deixar rolar */
+    flex-wrap: wrap; /* Permitimos a quebra em telas mobile para não estourar o layout */
+    justify-content: center;
   }
-
-  .topControls {
-    flex-direction: column;
-    align-items: stretch;
+  .actionButton { /* Mantém os botões com um tamanho razoável */
+    flex-grow: 1;
+    text-align: center;
   }
-
-  .searchContainer {
-    width: 100%;
-    min-width: unset;
-  }
-  
-  .filterContainer {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .addEmployeeButton {
-    width: 100%;
-  }
-
-  .funcionariosTable th,
-  .funcionariosTable td {
-    padding: 0.6rem 0.8rem;
-    font-size: 0.9rem;
-  }
-
-  .actions {
-    flex-direction: column;
-    gap: 0.4rem;
-  }
-
-  .actionButton {
-    width: 100%;
-    padding: 0.6rem;
-    font-size: 0.8rem;
-  }
-
-  .modalContent {
-    padding: 1.5rem;
-  }
-  .modalTitle {
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
-  }
-  .modalActions {
-    flex-direction: column;
-    gap: 0.8rem;
-  }
-  .modalActions button {
-    width: 100%;
-  }
+  .modalContent { padding: 1.5rem; }
+  .modalTitle { font-size: 1.5rem; margin-bottom: 1rem; }
+  .modalActions { flex-direction: column; gap: 0.8rem; }
+  .modalActions button { width: 100%; }
 }
 
 @media (max-width: 600px) {
-  .funcionariosMain {
-    padding: 1rem;
-  }
-
-  .pageTitle {
-    font-size: 1.6rem;
-    margin-bottom: 1rem;
-  }
-
-  .topControls, .filterContainer {
-    padding: 1rem;
-  }
-
-  .searchInput, .addEmployeeButton, .filterSelect {
-    padding: 0.7rem 1rem;
-    font-size: 0.9rem;
-  }
-
-  .funcionariosTable th,
-  .funcionariosTable td {
-    padding: 0.5rem 0.7rem;
-    font-size: 0.85rem;
-  }
+  .funcionariosMain { padding: 1rem; }
+  .pageTitle { font-size: 1.6rem; margin-bottom: 1rem; }
+  .topControls, .filterContainer { padding: 1rem; }
+  .searchInput, .addEmployeeButton, .filterInput, .filterSelect { padding: 0.7rem 1rem; font-size: 0.9rem; }
+  .funcionariosTable th, .funcionariosTable td { padding: 0.5rem 0.7rem; font-size: 0.85rem; }
 }
 
 @media (max-width: 400px) {
-  .pageTitle {
-    font-size: 1.4rem;
-  }
-
-  .modalContent {
-    padding: 1rem;
-  }
-  .modalTitle {
-    font-size: 1.3rem;
-  }
-  .input, .modalActions button {
-    padding: 0.7rem 1rem;
-    font-size: 0.9rem;
-  }
-  .checkboxLabel {
-    font-size: 0.9rem;
-  }
+  .pageTitle { font-size: 1.4rem; }
+  .modalContent { padding: 1rem; }
+  .modalTitle { font-size: 1.3rem; }
+  .input, .modalActions button { padding: 0.7rem 1rem; font-size: 0.9rem; }
+  .checkboxLabel { font-size: 0.9rem; }
 }

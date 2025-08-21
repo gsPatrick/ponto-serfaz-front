@@ -28,17 +28,11 @@ export default function GestaoFuncionariosPage() {
     contrato: '',
     status: '', // '', 'true', 'false'
   });
-
-  // Estados para popular os dropdowns de filtro dinamicamente
-  const [escalaOptions, setEscalaOptions] = useState([]);
-  const [cargoOptions, setCargoOptions] = useState([]);
-  const [contratoOptions, setContratoOptions] = useState([]);
   
   // Outros estados da UI
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalItems, setTotalItems] = useState(0);
 
   // Estados do Modal (sem alteração na lógica)
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
@@ -46,7 +40,6 @@ export default function GestaoFuncionariosPage() {
   const [formValues, setFormValues] = useState({ matricula: '', nome: '', escala: '', cargo: '', contrato: '', ativo: true });
   const [formLoading, setFormLoading] = useState(false);
   const [formError, setFormError] = useState(null);
-
 
   // --- CARREGAMENTO INICIAL DE DADOS ---
   useEffect(() => {
@@ -59,22 +52,13 @@ export default function GestaoFuncionariosPage() {
         return;
       }
       try {
-        // Buscamos TODOS os funcionários (ou um limite muito alto) para filtrar no front-end
         const response = await fetch(`${API_URL}/funcionarios?limit=10000`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         if (!response.ok) throw new Error('Falha ao carregar a lista de funcionários.');
         
         const data = await response.json();
-        const funcionariosData = data.funcionarios || [];
-        setAllFuncionarios(funcionariosData);
-
-        // Popula as opções dos filtros com base nos dados recebidos
-        const getUniqueOptions = (key) => [...new Set(funcionariosData.map(f => f[key]).filter(Boolean))].sort();
-        setEscalaOptions(getUniqueOptions('escala'));
-        setCargoOptions(getUniqueOptions('cargo'));
-        setContratoOptions(getUniqueOptions('contrato'));
-
+        setAllFuncionarios(data.funcionarios || []);
       } catch (err) {
         setError('Não foi possível carregar os funcionários.');
       } finally {
@@ -84,24 +68,19 @@ export default function GestaoFuncionariosPage() {
     fetchAllFuncionarios();
   }, [router]);
 
-
   // --- LÓGICA DE FILTRAGEM E PAGINAÇÃO (Executada a cada mudança nos filtros ou dados) ---
   const filteredFuncionarios = useMemo(() => {
     return allFuncionarios.filter(func => {
       const termoBuscaLower = filtros.termoBusca.toLowerCase();
-      // Combina todos os filtros com lógica AND
+      const escalaLower = filtros.escala.toLowerCase();
+      const cargoLower = filtros.cargo.toLowerCase();
+      const contratoLower = filtros.contrato.toLowerCase();
+
       return (
-        // Filtro de busca por Nome/Matrícula
-        (filtros.termoBusca === '' || 
-         func.nome.toLowerCase().includes(termoBuscaLower) || 
-         func.matricula.includes(filtros.termoBusca)) &&
-        // Filtro de Escala
-        (filtros.escala === '' || func.escala === filtros.escala) &&
-        // Filtro de Cargo
-        (filtros.cargo === '' || func.cargo === filtros.cargo) &&
-        // Filtro de Contrato
-        (filtros.contrato === '' || func.contrato === filtros.contrato) &&
-        // Filtro de Status
+        (filtros.termoBusca === '' || func.nome.toLowerCase().includes(termoBuscaLower) || func.matricula.includes(filtros.termoBusca)) &&
+        (filtros.escala === '' || (func.escala && func.escala.toLowerCase().includes(escalaLower))) &&
+        (filtros.cargo === '' || (func.cargo && func.cargo.toLowerCase().includes(cargoLower))) &&
+        (filtros.contrato === '' || (func.contrato && func.contrato.toLowerCase().includes(contratoLower))) &&
         (filtros.status === '' || String(func.ativo) === filtros.status)
       );
     });
@@ -109,7 +88,6 @@ export default function GestaoFuncionariosPage() {
 
   // Efeito para atualizar a lista exibida quando a lista filtrada ou a página mudam
   useEffect(() => {
-    setTotalItems(filteredFuncionarios.length);
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
     const endIndex = startIndex + ITEMS_PER_PAGE;
     setDisplayedFuncionarios(filteredFuncionarios.slice(startIndex, endIndex));
@@ -124,56 +102,46 @@ export default function GestaoFuncionariosPage() {
   };
 
   const handlePageChange = (newPage) => {
-    setCurrentPage(newPage);
+    const totalPages = Math.ceil(filteredFuncionarios.length / ITEMS_PER_PAGE);
+    if (newPage > 0 && newPage <= totalPages) {
+        setCurrentPage(newPage);
+    }
   };
 
-
-  // --- Funções do Modal e Ações ---
+  // --- Funções do Modal e Ações (sem grandes alterações) ---
   const openAddModal = () => {
     setCurrentFuncionario(null);
     setFormValues({ matricula: '', nome: '', escala: '', cargo: '', contrato: '', ativo: true });
     setFormError(null);
     setIsFormModalOpen(true);
   };
-
   const openEditModal = (funcionario) => {
     setCurrentFuncionario(funcionario);
     setFormValues(funcionario);
     setFormError(null);
     setIsFormModalOpen(true);
   };
-  
   const closeFormModal = () => {
     setIsFormModalOpen(false);
     setCurrentFuncionario(null);
   };
-  
   const handleFormChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormValues(prev => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value,
-    }));
+    setFormValues(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
   };
   
   const handleSaveFuncionario = async (e) => {
     e.preventDefault();
-    setFormLoading(true); 
-    setFormError(null);
+    setFormLoading(true); setFormError(null);
     const token = localStorage.getItem('jwtToken');
     const method = currentFuncionario ? 'PUT' : 'POST';
     const url = currentFuncionario ? `${API_URL}/funcionarios/${currentFuncionario.id}` : `${API_URL}/funcionarios`;
     try {
-      const response = await fetch(url, { 
-        method, 
-        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }, 
-        body: JSON.stringify(formValues) 
-      });
+      const response = await fetch(url, { method, headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify(formValues) });
       const responseData = await response.json();
       if (!response.ok) throw new Error(responseData.message || 'Falha ao salvar funcionário.');
       alert('Operação realizada com sucesso!');
       closeFormModal();
-      // Recarrega a página para garantir que a lista e os filtros sejam atualizados
       window.location.reload(); 
     } catch (err) {
       setFormError(err.message);
@@ -186,14 +154,9 @@ export default function GestaoFuncionariosPage() {
     if (!confirm(`Tem certeza que deseja ${funcionario.ativo ? 'DESATIVAR' : 'ATIVAR'} ${funcionario.nome}?`)) return;
     const token = localStorage.getItem('jwtToken');
     try {
-      const response = await fetch(`${API_URL}/funcionarios/${funcionario.id}`, { 
-        method: 'PUT', 
-        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }, 
-        body: JSON.stringify({ ...funcionario, ativo: !funcionario.ativo }) 
-      });
+      const response = await fetch(`${API_URL}/funcionarios/${funcionario.id}`, { method: 'PUT', headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ ...funcionario, ativo: !funcionario.ativo }) });
       if (!response.ok) throw new Error('Falha ao alterar status.');
       alert('Status alterado com sucesso!');
-      // Atualiza o estado localmente para uma resposta mais rápida da UI
       setAllFuncionarios(prev => prev.map(f => f.id === funcionario.id ? { ...f, ativo: !f.ativo } : f));
     } catch (err) {
       setError(err.message);
@@ -201,6 +164,7 @@ export default function GestaoFuncionariosPage() {
   };
 
   // --- RENDERIZAÇÃO ---
+  const totalItems = filteredFuncionarios.length;
   const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
 
   return (
@@ -222,25 +186,15 @@ export default function GestaoFuncionariosPage() {
           </button>
         </section>
 
-        {/* ÁREA DE FILTROS COM DROPDOWNS */}
         <section className={styles.filterContainer}>
-          <select name="escala" className={styles.filterSelect} value={filtros.escala} onChange={handleFiltroChange}>
-            <option value="">Todas as Escalas</option>
-            {escalaOptions.map(opt => <option key={opt} value={opt}>{opt}</option>)}
-          </select>
-          <select name="cargo" className={styles.filterSelect} value={filtros.cargo} onChange={handleFiltroChange}>
-            <option value="">Todos os Cargos</option>
-            {cargoOptions.map(opt => <option key={opt} value={opt}>{opt}</option>)}
-          </select>
-          <select name="contrato" className={styles.filterSelect} value={filtros.contrato} onChange={handleFiltroChange}>
-            <option value="">Todos os Contratos</option>
-            {contratoOptions.map(opt => <option key={opt} value={opt}>{opt}</option>)}
-          </select>
-          <select name="status" className={styles.filterSelect} value={filtros.status} onChange={handleFiltroChange}>
-            <option value="">Todos os Status</option>
-            <option value="true">Apenas Ativos</option>
-            <option value="false">Apenas Inativos</option>
-          </select>
+            <input type="text" name="escala" placeholder="Filtrar por Escala..." className={styles.filterInput} value={filtros.escala} onChange={handleFiltroChange} />
+            <input type="text" name="cargo" placeholder="Filtrar por Cargo..." className={styles.filterInput} value={filtros.cargo} onChange={handleFiltroChange} />
+            <input type="text" name="contrato" placeholder="Filtrar por Contrato..." className={styles.filterInput} value={filtros.contrato} onChange={handleFiltroChange} />
+            <select name="status" className={styles.filterSelect} value={filtros.status} onChange={handleFiltroChange}>
+              <option value="">Todos os Status</option>
+              <option value="true">Apenas Ativos</option>
+              <option value="false">Apenas Inativos</option>
+            </select>
         </section>
 
         {error && <p className={styles.errorMessage}>{error}</p>}
@@ -250,13 +204,7 @@ export default function GestaoFuncionariosPage() {
             <table className={styles.funcionariosTable}>
               <thead>
                 <tr>
-                  <th>Matrícula</th>
-                  <th>Nome</th>
-                  <th>Escala</th>
-                  <th>Cargo</th>
-                  <th>Contrato</th>
-                  <th>Status</th>
-                  <th>Ações</th>
+                  <th>Matrícula</th><th>Nome</th><th>Escala</th><th>Cargo</th><th>Contrato</th><th>Status</th><th>Ações</th>
                 </tr>
               </thead>
               <tbody>
@@ -265,11 +213,8 @@ export default function GestaoFuncionariosPage() {
                 ) : displayedFuncionarios.length > 0 ? (
                   displayedFuncionarios.map((func) => (
                     <tr key={func.id}>
-                      <td>{func.matricula}</td>
-                      <td>{func.nome}</td>
-                      <td>{func.escala}</td>
-                      <td>{func.cargo}</td>
-                      <td>{func.contrato}</td>
+                      <td>{func.matricula}</td><td>{func.nome}</td><td>{func.escala}</td>
+                      <td>{func.cargo}</td><td>{func.contrato}</td>
                       <td className={func.ativo ? styles.statusActive : styles.statusInactive}>{func.ativo ? 'Ativo' : 'Inativo'}</td>
                       <td className={styles.actions}>
                         <button onClick={() => openEditModal(func)} className={`${styles.actionButton} ${styles.editButton}`}>Editar</button>
@@ -289,9 +234,9 @@ export default function GestaoFuncionariosPage() {
 
         {totalItems > 0 && (
           <section className={styles.pagination}>
-            <button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1 || loading} className={styles.paginationButton}>Anterior</button>
+            <button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1} className={styles.paginationButton}>Anterior</button>
             <span className={styles.pageInfo}>Página {currentPage} de {totalPages} ({totalItems} registros)</span>
-            <button onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages || loading} className={styles.paginationButton}>Próxima</button>
+            <button onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages} className={styles.paginationButton}>Próxima</button>
           </section>
         )}
       </main>
@@ -301,35 +246,14 @@ export default function GestaoFuncionariosPage() {
           <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
             <h2 className={styles.modalTitle}>{currentFuncionario ? 'Editar Funcionário' : 'Adicionar Novo Funcionário'}</h2>
             <form onSubmit={handleSaveFuncionario}>
-              <div className={styles.inputGroup}>
-                <label htmlFor="matricula" className={styles.label}>Matrícula:</label>
-                <input type="text" id="matricula" name="matricula" className={styles.input} value={formValues.matricula} onChange={handleFormChange} required />
-              </div>
-              <div className={styles.inputGroup}>
-                <label htmlFor="nome" className={styles.label}>Nome:</label>
-                <input type="text" id="nome" name="nome" className={styles.input} value={formValues.nome} onChange={handleFormChange} required />
-              </div>
-              <div className={styles.inputGroup}>
-                <label htmlFor="escala" className={styles.label}>Escala:</label>
-                <input type="text" id="escala" name="escala" className={styles.input} value={formValues.escala} onChange={handleFormChange} required />
-              </div>
-              <div className={styles.inputGroup}>
-                <label htmlFor="cargo" className={styles.label}>Cargo:</label>
-                <input type="text" id="cargo" name="cargo" className={styles.input} value={formValues.cargo} onChange={handleFormChange} />
-              </div>
-              <div className={styles.inputGroup}>
-                <label htmlFor="contrato" className={styles.label}>Contrato:</label>
-                <input type="text" id="contrato" name="contrato" className={styles.input} value={formValues.contrato} onChange={handleFormChange} />
-              </div>
-              <div className={styles.inputGroup}>
-                <input type="checkbox" id="ativo" name="ativo" checked={formValues.ativo} onChange={handleFormChange} className={styles.checkbox} />
-                <label htmlFor="ativo" className={styles.checkboxLabel}>Ativo</label>
-              </div>
+              <div className={styles.inputGroup}><label htmlFor="matricula" className={styles.label}>Matrícula:</label><input type="text" id="matricula" name="matricula" className={styles.input} value={formValues.matricula} onChange={handleFormChange} required /></div>
+              <div className={styles.inputGroup}><label htmlFor="nome" className={styles.label}>Nome:</label><input type="text" id="nome" name="nome" className={styles.input} value={formValues.nome} onChange={handleFormChange} required /></div>
+              <div className={styles.inputGroup}><label htmlFor="escala" className={styles.label}>Escala:</label><input type="text" id="escala" name="escala" className={styles.input} value={formValues.escala} onChange={handleFormChange} required /></div>
+              <div className={styles.inputGroup}><label htmlFor="cargo" className={styles.label}>Cargo:</label><input type="text" id="cargo" name="cargo" className={styles.input} value={formValues.cargo} onChange={handleFormChange} /></div>
+              <div className={styles.inputGroup}><label htmlFor="contrato" className={styles.label}>Contrato:</label><input type="text" id="contrato" name="contrato" className={styles.input} value={formValues.contrato} onChange={handleFormChange} /></div>
+              <div className={styles.inputGroup}><input type="checkbox" id="ativo" name="ativo" checked={formValues.ativo} onChange={handleFormChange} className={styles.checkbox} /><label htmlFor="ativo" className={styles.checkboxLabel}>Ativo</label></div>
               {formError && <p className={styles.errorMessage}>{formError}</p>}
-              <div className={styles.modalActions}>
-                <button type="button" onClick={closeFormModal} className={styles.cancelButton}>Cancelar</button>
-                <button type="submit" className={styles.saveButton} disabled={formLoading}>{formLoading ? 'Salvando...' : 'Salvar'}</button>
-              </div>
+              <div className={styles.modalActions}><button type="button" onClick={closeFormModal} className={styles.cancelButton}>Cancelar</button><button type="submit" className={styles.saveButton} disabled={formLoading}>{formLoading ? 'Salvando...' : 'Salvar'}</button></div>
             </form>
           </div>
         </div>

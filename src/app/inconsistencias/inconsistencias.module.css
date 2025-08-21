@@ -3,7 +3,7 @@
 .inconsistenciasMain {
   padding: 2rem;
   background-color: var(--cor-cinza-neutro);
-  min-height: calc(100vh - 80px); /* Ajusta para considerar a altura do Header */
+  min-height: calc(100vh - 80px);
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
@@ -16,17 +16,27 @@
   text-align: center;
 }
 
-/* Filters Section - REUTILIZAÇÃO DOS ESTILOS DE RELATÓRIOS */
-.filtersContainer {
+/* Container para filtros primários (Data e Botão de Busca) */
+.topControls {
   background-color: var(--cor-branco-puro);
   padding: 1.5rem;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  margin-bottom: 0.5rem;
   display: flex;
   flex-wrap: wrap;
   gap: 1rem;
   align-items: flex-end;
+}
+
+/* Container para filtros secundários (rápidos, no front-end) */
+.filterContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
 }
 
 .filterGroup {
@@ -42,7 +52,7 @@
   font-weight: 600;
 }
 
-.input, .textarea { /* Estilos para input e textarea */
+.input, .textarea, .filterInput, .filterSelect {
   width: 100%;
   padding: 0.8rem 1rem;
   border: 1px solid #ccc;
@@ -53,13 +63,23 @@
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-.input:focus, .textarea:focus {
+.filterSelect {
+  background-color: var(--cor-branco-puro);
+  cursor: pointer;
+}
+
+.filterInput, .filterSelect {
+  flex: 1 1 180px;
+  font-size: 0.95rem;
+}
+
+.input:focus, .textarea:focus, .filterInput:focus, .filterSelect:focus {
   border-color: var(--cor-azul-medio);
   box-shadow: 0 0 0 3px rgba(45, 130, 183, 0.2);
 }
 
 .textarea {
-  resize: vertical; /* Permite redimensionar verticalmente */
+  resize: vertical;
   min-height: 80px;
 }
 
@@ -84,7 +104,6 @@
   background-color: #cccccc;
   cursor: not-allowed;
   transform: none;
-  box-shadow: none;
 }
 
 .errorMessage {
@@ -93,7 +112,6 @@
   border: 1px solid var(--cor-vermelho-rubi);
   padding: 0.8rem;
   border-radius: 5px;
-  margin-bottom: 1.5rem;
   text-align: center;
 }
 
@@ -107,7 +125,7 @@
 }
 
 .tableWrapper {
-  /* Pode ser usado para scrollbar customizado */
+  /* Placeholder for potential custom scrollbar styles */
 }
 
 .inconsistenciasTable {
@@ -147,187 +165,40 @@
 }
 
 /* Status Badges */
-.statusOpen {
-  font-weight: bold;
-  color: var(--cor-vermelho-rubi);
-}
-
-.statusInProgress {
-  font-weight: bold;
-  color: var(--cor-ambar);
-}
-
-.statusResolved {
-  font-weight: bold;
-  color: var(--cor-verde-esmeralda);
-}
+.statusOpen { font-weight: bold; color: var(--cor-vermelho-rubi); }
+.statusInProgress { font-weight: bold; color: var(--cor-ambar); }
+.statusResolved { font-weight: bold; color: var(--cor-verde-esmeralda); }
 
 /* Actions in Table */
-.actions {
-  display: flex;
-  gap: 0.5rem;
-  white-space: nowrap;
-}
-
-.actionButton {
-  padding: 0.5rem 0.8rem;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 0.8rem;
-  transition: background-color 0.3s ease;
-}
-
-.viewButton {
-  background-color: var(--cor-azul-medio);
-  color: var(--cor-branco-puro);
-}
-
-.viewButton:hover {
-  background-color: #246ba6;
-}
-
-.changeStatusButton {
-  background-color: var(--cor-ambar);
-  color: var(--cor-branco-puro);
-}
-
-.changeStatusButton:hover {
-  background-color: #e09b00;
-}
+.actions { display: flex; gap: 0.5rem; white-space: nowrap; }
+.actionButton { padding: 0.5rem 0.8rem; border: none; border-radius: 5px; cursor: pointer; font-size: 0.8rem; transition: background-color 0.3s ease; }
+.viewButton { background-color: var(--cor-azul-medio); color: var(--cor-branco-puro); }
+.viewButton:hover { background-color: #246ba6; }
+.changeStatusButton { background-color: var(--cor-ambar); color: var(--cor-branco-puro); }
+.changeStatusButton:hover { background-color: #e09b00; }
 
 /* Pagination */
-.pagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 1rem;
-  gap: 1rem;
-}
-
-.paginationButton {
-  background-color: var(--cor-azul-medio);
-  color: var(--cor-branco-puro);
-  padding: 0.6rem 1.2rem;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 0.9rem;
-  transition: background-color 0.3s ease;
-}
-
-.paginationButton:hover {
-  background-color: #246ba6;
-}
-
-.paginationButton:disabled {
-  background-color: #cccccc;
-  cursor: not-allowed;
-}
-
-.pageInfo {
-  color: var(--cor-grafite);
-  font-size: 1rem;
-}
+.pagination { display: flex; justify-content: center; align-items: center; margin-top: 1rem; gap: 1rem; }
+.paginationButton { background-color: var(--cor-azul-medio); color: var(--cor-branco-puro); padding: 0.6rem 1.2rem; border: none; border-radius: 5px; cursor: pointer; font-size: 0.9rem; transition: background-color 0.3s ease; }
+.paginationButton:hover { background-color: #246ba6; }
+.paginationButton:disabled { background-color: #cccccc; cursor: not-allowed; }
+.pageInfo { color: var(--cor-grafite); font-size: 1rem; }
 
 /* Modal Styles */
-.modalOverlay {
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background-color: rgba(0, 0, 0, 0.6);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.modalContent {
-  background-color: var(--cor-branco-puro);
-  padding: 2.5rem;
-  border-radius: 8px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
-  max-width: 600px;
-  width: 90%;
-  max-height: 90vh;
-  overflow-y: auto;
-  position: relative;
-}
-
-.modalTitle {
-  color: var(--cor-azul-noturno);
-  font-size: 1.8rem;
-  margin-bottom: 1.5rem;
-  text-align: center;
-}
-
-.modalContent p {
-  margin-bottom: 0.8rem;
-  color: var(--cor-grafite);
-  line-height: 1.6;
-}
-
-.modalContent p strong {
-  color: var(--cor-azul-noturno);
-}
-
-.modalCloseButton {
-  background-color: var(--cor-grafite);
-  color: var(--cor-branco-puro);
-  padding: 0.8rem 1.5rem;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 1rem;
-  margin-top: 2rem;
-  width: 100%;
-  transition: background-color 0.3s ease;
-}
-
-.modalCloseButton:hover {
-  background-color: #333333;
-}
-
-.modalActions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 1rem;
-  margin-top: 2rem;
-}
-
-.cancelButton {
-  background-color: #ccc;
-  color: var(--cor-grafite);
-  padding: 0.8rem 1.5rem;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 1rem;
-  transition: background-color 0.3s ease;
-}
-
-.cancelButton:hover {
-  background-color: #b3b3b3;
-}
-
-.saveButton {
-  background-color: var(--cor-azul-medio);
-  color: var(--cor-branco-puro);
-  padding: 0.8rem 1.5rem;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 1rem;
-  transition: background-color 0.3s ease;
-}
-
-.saveButton:hover {
-  background-color: #246ba6;
-}
-
-.saveButton:disabled {
-  background-color: #cccccc;
-  cursor: not-allowed;
-}
+.modalOverlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.6); display: flex; justify-content: center; align-items: center; z-index: 1000; }
+.modalContent { background-color: var(--cor-branco-puro); padding: 2.5rem; border-radius: 8px; box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2); max-width: 600px; width: 90%; max-height: 90vh; overflow-y: auto; position: relative; }
+.modalTitle { color: var(--cor-azul-noturno); font-size: 1.8rem; margin-bottom: 1.5rem; text-align: center; }
+.modalContent p { margin-bottom: 0.8rem; color: var(--cor-grafite); line-height: 1.6; }
+.modalContent p strong { color: var(--cor-azul-noturno); }
+.modalCloseButton { background-color: var(--cor-grafite); color: var(--cor-branco-puro); padding: 0.8rem 1.5rem; border: none; border-radius: 5px; cursor: pointer; font-size: 1rem; margin-top: 2rem; width: 100%; transition: background-color 0.3s ease; }
+.modalCloseButton:hover { background-color: #333333; }
+.modalActions { display: flex; justify-content: flex-end; gap: 1rem; margin-top: 2rem; }
+.cancelButton { background-color: #ccc; color: var(--cor-grafite); padding: 0.8rem 1.5rem; border: none; border-radius: 5px; cursor: pointer; font-size: 1rem; transition: background-color 0.3s ease; }
+.cancelButton:hover { background-color: #b3b3b3; }
+.saveButton { background-color: var(--cor-azul-medio); color: var(--cor-branco-puro); padding: 0.8rem 1.5rem; border: none; border-radius: 5px; cursor: pointer; font-size: 1rem; transition: background-color 0.3s ease; }
+.saveButton:hover { background-color: #246ba6; }
+.saveButton:disabled { background-color: #cccccc; cursor: not-allowed; }
+.inputGroup { margin-bottom: 1rem; text-align: left; }
 
 /* Responsividade */
 @media (max-width: 1024px) {
@@ -337,7 +208,7 @@
 
 @media (max-width: 768px) {
   .inconsistenciasMain { padding: 1.5rem; gap: 1rem; }
-  .filtersContainer { flex-direction: column; align-items: stretch; }
+  .topControls, .filterContainer { flex-direction: column; align-items: stretch; }
   .filterGroup { min-width: unset; width: 100%; }
   .filterButton { width: 100%; margin-top: 0.5rem; }
   .modalContent { padding: 1.5rem; }
@@ -349,7 +220,7 @@
 @media (max-width: 600px) {
   .inconsistenciasMain { padding: 1rem; }
   .pageTitle { font-size: 1.6rem; margin-bottom: 1rem; }
-  .filtersContainer { padding: 1rem; }
+  .topControls, .filterContainer { padding: 1rem; }
   .inconsistenciasTable th, .inconsistenciasTable td { padding: 0.6rem 0.8rem; font-size: 0.9rem; }
   .actions { flex-direction: column; gap: 0.3rem; }
   .actionButton { width: 100%; padding: 0.6rem; font-size: 0.8rem; }

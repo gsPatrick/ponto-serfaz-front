@@ -3,35 +3,45 @@
 .relatoriosMain {
   padding: 2rem;
   background-color: var(--cor-cinza-neutro);
-  min-height: calc(100vh - 80px); /* Ajusta para considerar a altura do Header */
-  display: flex; /* Adicionado para melhor controle do layout principal */
-  flex-direction: column; /* Conteúdo empilhado verticalmente */
-  gap: 1.5rem; /* Espaçamento entre as seções */
+  min-height: calc(100vh - 80px);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
 .pageTitle {
   color: var(--cor-azul-noturno);
   font-size: 2rem;
-  margin-bottom: 0.5rem; /* Ajustado */
+  margin-bottom: 0.5rem;
   text-align: center;
 }
 
-/* Filters Section */
-.filtersContainer {
+/* Container para filtros primários (Data e Botão de Busca) */
+.topControls {
   background-color: var(--cor-branco-puro);
   padding: 1.5rem;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  margin-bottom: 0.5rem; /* Ajustado */
   display: flex;
-  flex-wrap: wrap; /* Permite que os itens quebrem para a próxima linha */
-  gap: 1rem; /* Espaçamento entre os filtros */
-  align-items: flex-end; /* Alinha os itens na parte inferior */
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: flex-end;
+}
+
+/* Container para filtros secundários (rápidos, no front-end) */
+.filterContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
 }
 
 .filterGroup {
-  flex: 1; /* Permite que os grupos de filtro cresçam */
-  min-width: 180px; /* Largura mínima para cada grupo em desktop */
+  flex: 1;
+  min-width: 180px;
 }
 
 .label {
@@ -42,7 +52,7 @@
   font-weight: 600;
 }
 
-.input {
+.input, .filterInput {
   width: 100%;
   padding: 0.8rem 1rem;
   border: 1px solid #ccc;
@@ -53,7 +63,12 @@
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-.input:focus {
+.filterInput {
+  flex: 1 1 180px;
+  font-size: 0.95rem;
+}
+
+.input:focus, .filterInput:focus {
   border-color: var(--cor-azul-medio);
   box-shadow: 0 0 0 3px rgba(45, 130, 183, 0.2);
 }
@@ -67,8 +82,7 @@
   cursor: pointer;
   font-size: 1rem;
   transition: background-color 0.3s ease, transform 0.2s ease;
-  flex-shrink: 0; /* Impede que os botões encolham */
-  /* Remove margin-top aqui para permitir que flexbox cuide do alinhamento */
+  flex-shrink: 0;
 }
 
 .filterButton:hover, .exportButton:hover {
@@ -80,16 +94,10 @@
   background-color: #cccccc;
   cursor: not-allowed;
   transform: none;
-  box-shadow: none;
 }
 
-.exportButton {
-  background-color: var(--cor-verde-esmeralda); /* Verde para exportar */
-}
-
-.exportButton:hover {
-  background-color: #266429;
-}
+.exportButton { background-color: var(--cor-verde-esmeralda); }
+.exportButton:hover { background-color: #266429; }
 
 .errorMessage {
   color: var(--cor-vermelho-rubi);
@@ -97,10 +105,8 @@
   border: 1px solid var(--cor-vermelho-rubi);
   padding: 0.8rem;
   border-radius: 5px;
-  margin-bottom: 1.5rem;
   text-align: center;
 }
-
 
 /* Table Section */
 .tableSection {
@@ -108,22 +114,21 @@
   padding: 1.5rem;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  overflow-x: auto; /* CRUCIAL: Adiciona rolagem horizontal se a tabela for maior */
+  overflow-x: auto;
 }
 
 .marcacoesTable {
-  width: 100%; /* A tabela tenta ocupar 100% da largura disponível */
+  width: 100%;
   border-collapse: collapse;
-  table-layout: auto; /* Permite que o conteúdo das células influencie a largura da coluna */
+  table-layout: auto;
 }
 
-.marcacoesTable th,
-.marcacoesTable td {
+.marcacoesTable th, .marcacoesTable td {
   border: 1px solid #eee;
   padding: 0.8rem 1rem;
   text-align: left;
-  white-space: nowrap; /* Impede que o texto quebre dentro da célula (para a rolagem funcionar bem) */
-  vertical-align: middle; /* Alinhamento vertical */
+  white-space: nowrap;
+  vertical-align: middle;
 }
 
 .marcacoesTable th {
@@ -132,117 +137,34 @@
   font-weight: bold;
 }
 
-.marcacoesTable tr:nth-child(even) {
-  background-color: #f9f9f9; /* Linhas zebradas para melhor legibilidade */
-}
-
-.marcacoesTable tr:hover {
-  background-color: #f0f0f0;
-}
-
-.noData {
-  text-align: center;
-  font-style: italic;
-  color: var(--cor-grafite);
-  padding: 2rem;
-}
+.marcacoesTable tr:nth-child(even) { background-color: #f9f9f9; }
+.marcacoesTable tr:hover { background-color: #f0f0f0; }
+.noData { text-align: center; font-style: italic; color: var(--cor-grafite); padding: 2rem; }
 
 /* Pagination */
-.pagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 1rem; /* Ajustado */
-  gap: 1rem;
-}
+.pagination { display: flex; justify-content: center; align-items: center; margin-top: 1rem; gap: 1rem; }
+.paginationButton { background-color: var(--cor-azul-medio); color: var(--cor-branco-puro); padding: 0.6rem 1.2rem; border: none; border-radius: 5px; cursor: pointer; font-size: 0.9rem; transition: background-color 0.3s ease; }
+.paginationButton:hover { background-color: #246ba6; }
+.paginationButton:disabled { background-color: #cccccc; cursor: not-allowed; }
+.pageInfo { color: var(--cor-grafite); font-size: 1rem; }
 
-.paginationButton {
-  background-color: var(--cor-azul-medio);
-  color: var(--cor-branco-puro);
-  padding: 0.6rem 1.2rem;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 0.9rem;
-  transition: background-color 0.3s ease;
-}
-
-.paginationButton:hover {
-  background-color: #246ba6;
-}
-
-.paginationButton:disabled {
-  background-color: #cccccc;
-  cursor: not-allowed;
-}
-
-.pageInfo {
-  color: var(--cor-grafite);
-  font-size: 1rem;
-}
-
-/* Responsividade Geral */
+/* Responsividade */
 @media (max-width: 768px) {
-  .relatoriosMain {
-    padding: 1.5rem;
-    gap: 1rem; /* Reduz o espaçamento geral */
-  }
-
-  .filtersContainer {
-    flex-direction: column; /* Empilha os filtros verticalmente */
-    align-items: stretch; /* Estica os itens para preencher a largura */
-  }
-
-  .filterGroup {
-    min-width: unset; /* Remove largura mínima em mobile */
-    width: 100%; /* Ocupa toda a largura disponível */
-  }
-
-  .filterButton, .exportButton {
-    width: 100%; /* Botões também ocupam toda a largura */
-    margin-top: 0.5rem; /* Ajusta a margem entre os botões */
-  }
-
-  .filterButton:first-of-type {
-    margin-top: 1.5rem; /* Mantém margem para o primeiro botão */
-  }
+  .relatoriosMain { padding: 1.5rem; gap: 1rem; }
+  .topControls, .filterContainer { flex-direction: column; align-items: stretch; }
+  .filterGroup { min-width: unset; width: 100%; }
+  .filterButton, .exportButton { width: 100%; margin-top: 0.5rem; }
 }
 
 @media (max-width: 600px) {
-  .relatoriosMain {
-    padding: 1rem;
-  }
-
-  .pageTitle {
-    font-size: 1.6rem;
-    margin-bottom: 1rem;
-  }
-
-  .filtersContainer {
-    padding: 1rem;
-  }
-
-  .marcacoesTable th,
-  .marcacoesTable td {
-    padding: 0.5rem 0.7rem; /* Reduz o padding das células */
-    font-size: 0.85rem; /* Reduz o tamanho da fonte */
-  }
+  .relatoriosMain { padding: 1rem; }
+  .pageTitle { font-size: 1.6rem; margin-bottom: 1rem; }
+  .topControls, .filterContainer { padding: 1rem; }
+  .marcacoesTable th, .marcacoesTable td { padding: 0.5rem 0.7rem; font-size: 0.85rem; }
 }
 
-/* Para telas de celular muito estreitas */
 @media (max-width: 400px) {
-  .pageTitle {
-    font-size: 1.4rem;
-  }
-
-  .input, .filterButton, .exportButton, .paginationButton {
-    padding: 0.7rem 1rem;
-    font-size: 0.9rem;
-  }
-
-  .marcacoesTable th,
-  .marcacoesTable td {
-    padding: 0.4rem 0.6rem;
-    font-size: 0.8rem;
-  }
+  .pageTitle { font-size: 1.4rem; }
+  .input, .filterButton, .exportButton, .paginationButton { padding: 0.7rem 1rem; font-size: 0.9rem; }
+  .marcacoesTable th, .marcacoesTable td { padding: 0.4rem 0.6rem; font-size: 0.8rem; }
 }
